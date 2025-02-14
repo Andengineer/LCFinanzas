@@ -13,6 +13,7 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 @Component({
   selector: 'app-letradecambio',
   providers: [provideNativeDateAdapter()],
+  standalone: true,
   imports: [MatCheckboxModule,MatDatepickerModule,FormsModule,MatInputModule, MatFormFieldModule,MatSelectModule,MatButtonModule,MatIconModule,ReactiveFormsModule,CommonModule],
   templateUrl: './letradecambio.component.html',
   styleUrl: './letradecambio.component.css'
@@ -43,16 +44,28 @@ export class LetradecambioComponent {
     { id_moneda: 'KRW', nombre: 'Won Surcoreano' }
   ];
   constructor(private formBuilder:FormBuilder){}
-  ngOnInit() : void {
-    this.form=this.formBuilder.group({
-      hmonto:['',Validators.required],
-      hfecha:['',Validators.required],
-      hdeudor:['',Validators.required],
-      hacredor:['',Validators.required],
-      hcurso:['',Validators.required],
-      htasa:['',Validators.required],
-    })   
-    }
+  ngOnInit(): void {
+    this.form = this.formBuilder.group({
+      hmonto: ['', Validators.required],
+      hfecha: ['', Validators.required],
+      hdeudor: ['', Validators.required],
+      hacredor: ['', Validators.required],
+      hcurso: ['', Validators.required],
+      htasa: ['', [Validators.required, Validators.min(0), Validators.max(100)]],
+      htasar: [{ value: '', disabled: true }, [Validators.min(0), Validators.max(100)]], // Inicialmente deshabilitado
+      aplicarRetencion: [false] // Control para el checkbox
+    });
+
+    // Escuchar cambios en el checkbox y habilitar/deshabilitar la tasa de retención
+    this.form.get('aplicarRetencion')?.valueChanges.subscribe((valor) => {
+      if (valor) {
+        this.form.get('htasar')?.enable();
+      } else {
+        this.form.get('htasar')?.disable();
+        this.form.get('htasar')?.setValue(''); // Limpiar el campo si se deshabilita
+      }
+    });
+  }
 
   generarLetra(): void {
     console.log('Letra de Cambio Generada:', {

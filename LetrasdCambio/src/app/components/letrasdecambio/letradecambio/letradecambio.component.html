@@ -1,7 +1,7 @@
 <div class="container mt-4">
   <h2 class="text-center">Letras de Cambio</h2>
   <form form [formGroup]="form" (submit)="generarLetra()">
-     <!-- Monto -->
+    <!-- Monto -->
     <mat-form-field class="full-width">
       <mat-label>Monto</mat-label>
       <input matInput type="number" formControlName="hmonto">
@@ -11,17 +11,24 @@
       <mat-label>Moneda</mat-label>
       <mat-select formControlName="hcurso">
         @for (food of listaMonedas; track food) {
-          <mat-option [value]="food.id_moneda">{{food.nombre}}</mat-option>
+        <mat-option [value]="food.id_moneda">{{food.nombre}}</mat-option>
         }
-    </mat-select>
-  </mat-form-field>
-   <!-- Tasa de descuento -->
-   <mat-form-field class="full-width">
-    <mat-label>Tasa de Descuento (%)</mat-label>
-    <input matInput type="number" formControlName="htasa" min="0" max="100">
-  </mat-form-field>
-  <!-- Retencion -->
-  
+      </mat-select>
+    </mat-form-field>
+    <!-- Tasa de descuento -->
+    <mat-form-field class="full-width">
+      <mat-label>Tasa de Descuento (%)</mat-label>
+      <input matInput type="number" formControlName="htasa" min="0" max="100">
+    </mat-form-field>
+    <!-- Checkbox de Aplicar Retención -->
+    <div>
+      <mat-checkbox formControlName="aplicarRetencion">Aplicar retenciones</mat-checkbox>
+    </div>
+    <!-- Porcentaje de Retención -->
+    <mat-form-field class="full-width">
+      <mat-label>Tasa de Retención (%)</mat-label>
+      <input matInput type="number" formControlName="htasar" min="0" max="100">
+    </mat-form-field>
     <!-- Fecha de vencimiento -->
     <mat-form-field class="full-width">
       <mat-label>Fecha de Vencimiento</mat-label>
@@ -32,12 +39,12 @@
 
     <br>
 
-     <!-- deudor -->
+    <!-- deudor -->
     <mat-form-field class="full-width">
       <mat-label>Deudor</mat-label>
       <input matInput type="text" placeholder="Nombre del deudor" formControlName="hdeudor">
-    </mat-form-field> 
-     <!-- Acreedor -->
+    </mat-form-field>
+    <!-- Acreedor -->
     <mat-form-field class="full-width">
       <mat-label>Acreedor</mat-label>
       <input matInput type="text" placeholder="Nombre del acreedor" formControlName="hacredor">
