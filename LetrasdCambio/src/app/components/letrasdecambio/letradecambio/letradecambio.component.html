@@ -1,0 +1,49 @@
+<div class="container mt-4">
+  <h2 class="text-center">Letras de Cambio</h2>
+  <form form [formGroup]="form" (submit)="generarLetra()">
+    <mat-form-field class="full-width">
+      <mat-label>Monto</mat-label>
+      <input matInput type="number" formControlName="hmonto">
+    </mat-form-field>
+    <br>
+    <!-- Moneda falta -->
+    <mat-form-field class="example-full-width">
+      <mat-label>Moneda</mat-label>
+      <mat-select formControlName="hcurso">
+        @for (food of listaMonedas; track food) {
+          <mat-option [value]="food.id_moneda">{{food.nombre}}</mat-option>
+        }
+    </mat-select>
+  </mat-form-field>
+    <br>
+    <mat-form-field class="full-width">
+      <mat-label>Fecha de Vencimiento</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="hfecha" readonly>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    
+    <br>
+    <mat-form-field class="full-width">
+      <mat-label>Deudor</mat-label>
+      <input matInput type="text" placeholder="Nombre del deudor" formControlName="hdeudor">
+    </mat-form-field> 
+    <br>
+    <mat-form-field class="full-width">
+      <mat-label>Acreedor</mat-label>
+      <input matInput type="text" placeholder="Nombre del acreedor" formControlName="hacredor">
+    </mat-form-field>
+    <br>
+    <div>
+      <button mat-flat-button [disabled]="form.invalid">Generar letra</button>
+    </div>
+  </form>
+
+  <div class="mt-4">
+    <h4>Resumen</h4>
+    <p><strong>Monto:</strong> {{ monto }}</p>
+    <p><strong>Fecha de Vencimiento:</strong> {{ fechaVencimiento }}</p>
+    <p><strong>Deudor:</strong> {{ deudor }}</p>
+    <p><strong>Acreedor:</strong> {{ acreedor }}</p>
+  </div>
+</div>
