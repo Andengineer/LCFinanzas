@@ -48,6 +48,7 @@ export class LetradecambioComponent {
     this.form = this.formBuilder.group({
       hmonto: ['', Validators.required],
       hfecha: ['', Validators.required],
+      hfecha2: ['', Validators.required],
       hdeudor: ['', Validators.required],
       hacredor: ['', Validators.required],
       hcurso: ['', Validators.required],
