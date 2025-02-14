@@ -1,81 +1,125 @@
 <div class="container mt-4">
   <h2 class="text-center">Letras de Cambio</h2>
-  <form form [formGroup]="form" (submit)="generarLetra()">
-    <!-- Monto -->
-    <mat-form-field class="full-width">
-      <mat-label>Monto</mat-label>
-      <input matInput type="number" formControlName="hmonto">
-    </mat-form-field>
-    <!-- Moneda -->
-    <mat-form-field class="example-full-width">
-      <mat-label>Moneda</mat-label>
-      <mat-select formControlName="hcurso">
-        @for (food of listaMonedas; track food) {
-        <mat-option [value]="food.id_moneda">{{food.nombre}}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-    <!-- Tasa de descuento -->
-    <mat-form-field class="full-width">
-      <mat-label>Tasa de Descuento (TEA)(%)</mat-label>
-      <input matInput type="number" formControlName="htasa" min="0" max="100">
-    </mat-form-field>
-    <!-- Checkbox de Aplicar Retención -->
-    <div>
-      <mat-checkbox formControlName="aplicarRetencion">Aplicar retenciones</mat-checkbox>
-    </div>
-    <!-- Porcentaje de Retención -->
-    <mat-form-field class="full-width">
-      <mat-label>Tasa de Retención (%)</mat-label>
-      <input matInput type="number" formControlName="htasar" min="0" max="100">
-    </mat-form-field>
-    <!-- Fecha de vencimiento -->
-    <mat-form-field class="full-width">
-      <mat-label>Fecha de Vencimiento</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="hfecha" readonly>
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
-    <!-- Fecha de descuento -->
-    <mat-form-field class="full-width">
-      <mat-label>Fecha de Descuento</mat-label>
-      <input matInput [matDatepicker]="picker2" formControlName="hfecha2" readonly>
-      <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-      <mat-datepicker #picker2></mat-datepicker>
-    </mat-form-field>
-    <!-- deudor -->
-    <mat-form-field class="full-width">
-      <mat-label>Deudor</mat-label>
-      <input matInput type="text" placeholder="Nombre del deudor" formControlName="hdeudor">
-    </mat-form-field>
-    <!-- Acreedor -->
-    <mat-form-field class="full-width">
-      <mat-label>Acreedor</mat-label>
-      <input matInput type="text" placeholder="Nombre del acreedor" formControlName="hacredor">
-    </mat-form-field>
-    <br>
-    <div>
-      <button mat-flat-button [disabled]="form.invalid">Generar letra</button>
+
+  <div class="content">
+    <!-- Contenedor del formulario -->
+    <div class="form-container">
+      <form [formGroup]="form" (submit)="generarLetra()">
+        <!-- Monto -->
+        <mat-form-field class="full-width">
+          <mat-label>Monto</mat-label>
+          <input matInput type="number" formControlName="hmonto">
+        </mat-form-field>
+
+        <!-- Moneda -->
+        <mat-form-field class="full-width">
+          <mat-label>Moneda</mat-label>
+          <mat-select formControlName="hcurso">
+            @for (food of listaMonedas; track food) {
+            <mat-option [value]="food.id_moneda">{{ food.nombre }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Tasa de descuento -->
+        <mat-form-field class="full-width">
+          <mat-label>Tasa de Descuento (TEA)(%)</mat-label>
+          <input matInput type="number" formControlName="htasa" min="0" max="100">
+        </mat-form-field>
+
+        <!-- Checkbox de Aplicar Retención -->
+        <div>
+          <mat-checkbox formControlName="aplicarRetencion">Aplicar retenciones</mat-checkbox>
+        </div>
+
+        <!-- Porcentaje de Retención -->
+        <mat-form-field class="full-width">
+          <mat-label>Tasa de Retención (%)</mat-label>
+          <input matInput type="number" formControlName="htasar" min="0" max="100">
+        </mat-form-field>
+
+        <!-- Fecha de vencimiento -->
+        <mat-form-field class="full-width">
+          <mat-label>Fecha de Vencimiento</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="hfecha" readonly>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <!-- Fecha de descuento -->
+        <mat-form-field class="full-width">
+          <mat-label>Fecha de Descuento</mat-label>
+          <input matInput [matDatepicker]="picker2" formControlName="hfecha2" readonly>
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+
+        <!-- Deudor -->
+        <mat-form-field class="full-width">
+          <mat-label>Deudor</mat-label>
+          <input matInput type="text" placeholder="Nombre del deudor" formControlName="hdeudor">
+        </mat-form-field>
+
+        <!-- Acreedor -->
+        <mat-form-field class="full-width">
+          <mat-label>Acreedor</mat-label>
+          <input matInput type="text" placeholder="Nombre del acreedor" formControlName="hacredor">
+        </mat-form-field>
+
+        <br>
+        <div>
+          <button mat-flat-button [disabled]="form.invalid">Generar letra</button>
+        </div>
+      </form>
     </div>
 
-    <!-- Importe de Descuento -->
-    <div class="mt-2">
+    <!-- Contenedor de información -->
+    <div class="info-container">
       <h3>Gastos/Costes Iniciales:</h3>
-      <strong>Comision de estudio de riesgos:</strong>20
-      <br>
-      <strong>Fotocopia:</strong>2
-      <br>
-      <strong>Seguro Desgravamen (0.14%):</strong> {{ importeSD | number:'1.5-5' }}
-      <br>
+      <div class="monto">
+        <strong>Comisión de estudio de riesgos:</strong>
+        <span>20</span>
+      </div>
+      <div class="monto">
+        <strong>Fotocopia:</strong>
+        <span>2</span>
+      </div>
+      <div class="monto">
+        <strong>Seguro Desgravamen (0.14%):</strong>
+        <span>{{ importeSD | number:'1.5-5' }}</span>
+      </div>
       <h3>Gastos/Costes Finales:</h3>
-      <strong>Gastos de Administración:</strong>15
-      <br>
-      <strong>Portes:</strong>5.1
-      <br>
-      <h3>Retencion:</h3>
-      <strong>Importe de Retencion:</strong> {{ importeRetencion | number:'1.5-5' }}
-      <br>
+      <div class="monto">
+        <strong>Gastos de Administración:</strong>
+        <span>15</span>
+      </div>
+      <div class="monto">
+        <strong>Portes:</strong>
+        <span>6</span>
+      </div>
+      <h3>Retención:</h3>
+      <div class="monto">
+        <strong>Importe de Retención:</strong>
+        <span>{{ importeRetencion | number:'1.5-5' }}</span>
+      </div>
+
       <h3>Descuento:</h3>
-      <strong>Importe de Descuento:</strong> {{ importeDescuento | number:'1.5-5' }}
+      <div class="monto">
+        <strong>Importe de Descuento:</strong>
+        <span>{{ importeDescuento | number:'1.5-5' }}</span>
+      </div>
+      <div class="monto">
+        <strong>Monto Recibido:</strong>
+        <span>{{ MontoRecibido | number:'1.5-5' }}</span>
+      </div>
+      <div class="monto">
+        <strong>Monto Entregado:</strong>
+        <span>{{ MontoEntregado | number:'1.5-5' }}</span>
+      </div>
+      <div class="monto">
+        <strong>TCEA:</strong>
+        <span>{{ TCEA | number:'1.5-5' }} %</span>
+      </div>
     </div>
-  </form>
+  </div>
+</div>

@@ -24,6 +24,9 @@ export class LetradecambioComponent {
   importeRetencion: number = 0;
   importeDescuento: number = 0;
   importeSD: number = 0;
+  MontoRecibido: number = 0;
+  MontoEntregado: number = 0;
+  TCEA: number = 0;
   //
   monto: number = 0;
   fechaVencimiento: string = '';
@@ -62,13 +65,34 @@ export class LetradecambioComponent {
       aplicarRetencion: [false]
     });
 
+    this.form.get('hfecha')?.valueChanges.subscribe(() => {
+      this.calcularDescuento();
+      this.calcularTCEA();
+    });
+    
+    this.form.get('hfecha2')?.valueChanges.subscribe(() => {
+      this.calcularDescuento();
+      this.calcularTCEA();
+    });
     this.form.get('hmonto')?.valueChanges.subscribe(() => {
       this.calcularRetencion();
       this.calcularDescuento();
       this.calcularSD();
+      this.generarMontorecibido();
+      this.generarMontoentregado();
+      this.calcularTCEA();
     });
-    this.form.get('htasar')?.valueChanges.subscribe(() => this.calcularRetencion());
-    this.form.get('htasa')?.valueChanges.subscribe(() => this.calcularDescuento());
+    this.form.get('htasar')?.valueChanges.subscribe(() =>{
+      this.calcularRetencion()
+      this.generarMontorecibido();
+      this.generarMontoentregado();
+      this.calcularTCEA();
+    });
+    this.form.get('htasa')?.valueChanges.subscribe(() => {
+      this.calcularDescuento()
+      this.generarMontorecibido();
+      this.calcularTCEA();
+    });
 
     this.form.get('aplicarRetencion')?.valueChanges.subscribe((valor) => {
       if (valor) {
@@ -90,6 +114,22 @@ export class LetradecambioComponent {
     const monto = this.form.get('hmonto')?.value || 0;
     this.importeSD = monto * (0.14 / 100);
   }
+  calcularTCEA(): void {
+  const fechaVencimiento = new Date(this.form.get('hfecha')?.value);
+  const fechaDescuento = new Date(this.form.get('hfecha2')?.value);
+  
+  // Calcular la diferencia de días entre las fechas
+  const dias = (fechaVencimiento.getTime() - fechaDescuento.getTime()) / (1000 * 60 * 60 * 24);
+  
+  // Validar que los días sean mayores que 0 para evitar divisiones por cero
+  if (dias <= 0) {
+    console.error("Error: La fecha de vencimiento debe ser posterior a la fecha de descuento.");
+    return;
+  }
+
+  // Calcular la TCEA
+  this.TCEA = (Math.pow(this.MontoEntregado/this.MontoRecibido,(360 / dias))-1)*100;
+}
   calcularDescuento(): void {
     const monto = this.form.get('hmonto')?.value || 0;
     const tasaTEA = this.form.get('htasa')?.value || 0;
@@ -112,6 +152,14 @@ export class LetradecambioComponent {
 
     // Calcular el importe de descuento
     this.importeDescuento = monto * tasaDescuento;
+  }
+  generarMontorecibido(): void {
+    const monto = this.form.get('hmonto')?.value || 0;
+    this.MontoRecibido=monto-20-2-this.importeSD-this.importeRetencion;
+  }
+  generarMontoentregado(): void {
+    const monto = this.form.get('hmonto')?.value || 0;
+    this.MontoEntregado=monto+15+6-this.importeRetencion;
   }
   generarLetra(): void {
     console.log('Letra de Cambio Generada:', {
