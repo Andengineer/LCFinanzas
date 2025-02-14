@@ -17,7 +17,7 @@
     </mat-form-field>
     <!-- Tasa de descuento -->
     <mat-form-field class="full-width">
-      <mat-label>Tasa de Descuento (%)</mat-label>
+      <mat-label>Tasa de Descuento (TEA)(%)</mat-label>
       <input matInput type="number" formControlName="htasa" min="0" max="100">
     </mat-form-field>
     <!-- Checkbox de Aplicar Retención -->
@@ -57,13 +57,25 @@
     <div>
       <button mat-flat-button [disabled]="form.invalid">Generar letra</button>
     </div>
-  </form>
 
-  <div class="mt-4">
-    <h4>Resumen</h4>
-    <p><strong>Monto:</strong> {{ monto }}</p>
-    <p><strong>Fecha de Vencimiento:</strong> {{ fechaVencimiento }}</p>
-    <p><strong>Deudor:</strong> {{ deudor }}</p>
-    <p><strong>Acreedor:</strong> {{ acreedor }}</p>
-  </div>
-</div>
+    <!-- Importe de Descuento -->
+    <div class="mt-2">
+      <h3>Gastos/Costes Iniciales:</h3>
+      <strong>Comision de estudio de riesgos:</strong>20
+      <br>
+      <strong>Fotocopia:</strong>2
+      <br>
+      <strong>Seguro Desgravamen (0.14%):</strong> {{ importeSD | number:'1.5-5' }}
+      <br>
+      <h3>Gastos/Costes Finales:</h3>
+      <strong>Gastos de Administración:</strong>15
+      <br>
+      <strong>Portes:</strong>5.1
+      <br>
+      <h3>Retencion:</h3>
+      <strong>Importe de Retencion:</strong> {{ importeRetencion | number:'1.5-5' }}
+      <br>
+      <h3>Descuento:</h3>
+      <strong>Importe de Descuento:</strong> {{ importeDescuento | number:'1.5-5' }}
+    </div>
+  </form>
