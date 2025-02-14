@@ -1,12 +1,12 @@
 <div class="container mt-4">
   <h2 class="text-center">Letras de Cambio</h2>
   <form form [formGroup]="form" (submit)="generarLetra()">
+     <!-- Monto -->
     <mat-form-field class="full-width">
       <mat-label>Monto</mat-label>
       <input matInput type="number" formControlName="hmonto">
     </mat-form-field>
-    <br>
-    <!-- Moneda falta -->
+    <!-- Moneda -->
     <mat-form-field class="example-full-width">
       <mat-label>Moneda</mat-label>
       <mat-select formControlName="hcurso">
@@ -15,20 +15,29 @@
         }
     </mat-select>
   </mat-form-field>
-    <br>
+   <!-- Tasa de descuento -->
+   <mat-form-field class="full-width">
+    <mat-label>Tasa de Descuento (%)</mat-label>
+    <input matInput type="number" formControlName="htasa" min="0" max="100">
+  </mat-form-field>
+  <!-- Retencion -->
+  
+    <!-- Fecha de vencimiento -->
     <mat-form-field class="full-width">
       <mat-label>Fecha de Vencimiento</mat-label>
       <input matInput [matDatepicker]="picker" formControlName="hfecha" readonly>
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
-    
+
     <br>
+
+     <!-- deudor -->
     <mat-form-field class="full-width">
       <mat-label>Deudor</mat-label>
       <input matInput type="text" placeholder="Nombre del deudor" formControlName="hdeudor">
     </mat-form-field> 
-    <br>
+     <!-- Acreedor -->
     <mat-form-field class="full-width">
       <mat-label>Acreedor</mat-label>
       <input matInput type="text" placeholder="Nombre del acreedor" formControlName="hacredor">

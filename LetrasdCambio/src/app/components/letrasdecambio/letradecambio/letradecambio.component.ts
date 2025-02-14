@@ -8,15 +8,17 @@ import {MatInputModule} from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {provideNativeDateAdapter} from '@angular/material/core';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-letradecambio',
   providers: [provideNativeDateAdapter()],
-  imports: [MatDatepickerModule,FormsModule,MatInputModule, MatFormFieldModule,MatSelectModule,MatButtonModule,MatIconModule,ReactiveFormsModule,CommonModule],
+  imports: [MatCheckboxModule,MatDatepickerModule,FormsModule,MatInputModule, MatFormFieldModule,MatSelectModule,MatButtonModule,MatIconModule,ReactiveFormsModule,CommonModule],
   templateUrl: './letradecambio.component.html',
   styleUrl: './letradecambio.component.css'
 })
 export class LetradecambioComponent {
+  disableSelect = new FormControl(false);
   form:FormGroup=new FormGroup({});
   monto: number = 0;
   fechaVencimiento: string = '';
@@ -48,6 +50,7 @@ export class LetradecambioComponent {
       hdeudor:['',Validators.required],
       hacredor:['',Validators.required],
       hcurso:['',Validators.required],
+      htasa:['',Validators.required],
     })   
     }
 
@@ -58,5 +61,9 @@ export class LetradecambioComponent {
       deudor: this.form.value.hdeudor,
       acreedor: this.form.value.hacredor
     });
+  }
+  aplicarRetenciones() {
+    console.log("Aplicando retenciones...");
+    // Aquí puedes agregar la lógica de cálculo de retenciones según tu necesidad.
   }
 }
