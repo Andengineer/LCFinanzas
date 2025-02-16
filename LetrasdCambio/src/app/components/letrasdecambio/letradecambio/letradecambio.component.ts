@@ -75,7 +75,7 @@ export class LetradecambioComponent {
       hfecha2: ['', Validators.required],
       hdeudor: ['', Validators.required],
       hacredor: ['', Validators.required],
-      hcurso: ['', Validators.required],
+      hmoneda: ['', Validators.required],
       hcapitalizacion: [{ value: '', disabled: true }], // Inicialmente deshabilitado
       httasa: ['', Validators.required],
       htipotasa: ['', Validators.required],
@@ -83,49 +83,94 @@ export class LetradecambioComponent {
       htasar: [{ value: '', disabled: true }, [Validators.min(0), Validators.max(100)]],
       aplicarRetencion: [false]
     });
-     // Habilitar o deshabilitar `hcapitalizacion` dependiendo de `htipotasa`
-  this.form.get('htipotasa')?.valueChanges.subscribe(value => {
-    const capitalizacionControl = this.form.get('hcapitalizacion');
+    // Habilitar o deshabilitar `hcapitalizacion` dependiendo de `htipotasa`
+    this.form.get('htipotasa')?.valueChanges.subscribe(value => {
+      const capitalizacionControl = this.form.get('hcapitalizacion');
 
-    if (value === 'Nominal') {
-      capitalizacionControl?.enable();
-      capitalizacionControl?.setValidators(Validators.required);
-    } else {
-      capitalizacionControl?.disable();
-      capitalizacionControl?.setValue(null);
-      capitalizacionControl?.clearValidators();
-    }
+      if (value === 'Nominal') {
+        capitalizacionControl?.enable();
+        capitalizacionControl?.setValidators(Validators.required);
+      } else {
+        capitalizacionControl?.disable();
+        capitalizacionControl?.setValue(null);
+        capitalizacionControl?.clearValidators();
+      }
 
-    capitalizacionControl?.updateValueAndValidity();
-  });
+      capitalizacionControl?.updateValueAndValidity();
+    });
 
     this.form.get('hfecha')?.valueChanges.subscribe(() => {
-      this.calcularDescuento();
-      this.calcularTCEA();
+      this.calcularRetencion()
+      this.calcularSD()
+      this.calcularTCEA()
+      this.calcularDescuento()
+      this.generarMontorecibido()
+      this.generarMontoentregado()
+    });
+    this.form.get('htasa')?.valueChanges.subscribe(() => {
+      this.calcularRetencion()
+      this.calcularSD()
+      this.calcularTCEA()
+      this.calcularDescuento()
+      this.generarMontorecibido()
+      this.generarMontoentregado()
+    });
+    this.form.get('hcapitalizacion')?.valueChanges.subscribe(() => {
+      this.calcularRetencion()
+      this.calcularSD()
+      this.calcularTCEA()
+      this.calcularDescuento()
+      this.generarMontorecibido()
+      this.generarMontoentregado()
+    });
+    this.form.get('htipotasa')?.valueChanges.subscribe(() => {
+      this.calcularRetencion()
+      this.calcularSD()
+      this.calcularTCEA()
+      this.calcularDescuento()
+      this.generarMontorecibido()
+      this.generarMontoentregado()
+    });
+    this.form.get('httasa')?.valueChanges.subscribe(() => {
+      this.calcularRetencion()
+      this.calcularSD()
+      this.calcularTCEA()
+      this.calcularDescuento()
+      this.generarMontorecibido()
+      this.generarMontoentregado()
     });
 
     this.form.get('hfecha2')?.valueChanges.subscribe(() => {
-      this.calcularDescuento();
-      this.calcularTCEA();
+      this.calcularRetencion()
+      this.calcularSD()
+      this.calcularTCEA()
+      this.calcularDescuento()
+      this.generarMontorecibido()
+      this.generarMontoentregado()
     });
     this.form.get('hmonto')?.valueChanges.subscribe(() => {
-      this.calcularRetencion();
-      this.calcularDescuento();
-      this.calcularSD();
-      this.generarMontorecibido();
-      this.generarMontoentregado();
-      this.calcularTCEA();
+      this.calcularRetencion()
+      this.calcularSD()
+      this.calcularTCEA()
+      this.calcularDescuento()
+      this.generarMontorecibido()
+      this.generarMontoentregado()
     });
     this.form.get('htasar')?.valueChanges.subscribe(() => {
       this.calcularRetencion()
-      this.generarMontorecibido();
-      this.generarMontoentregado();
-      this.calcularTCEA();
+      this.calcularSD()
+      this.calcularTCEA()
+      this.calcularDescuento()
+      this.generarMontorecibido()
+      this.generarMontoentregado()
     });
     this.form.get('htasa')?.valueChanges.subscribe(() => {
+      this.calcularRetencion()
+      this.calcularSD()
+      this.calcularTCEA()
       this.calcularDescuento()
-      this.generarMontorecibido();
-      this.calcularTCEA();
+      this.generarMontorecibido()
+      this.generarMontoentregado()
     });
 
     this.form.get('aplicarRetencion')?.valueChanges.subscribe((valor) => {
@@ -144,10 +189,12 @@ export class LetradecambioComponent {
     const tasa = this.form.get('htasar')?.value || 0;
     this.importeRetencion = monto * (tasa / 100);
   }
+  //calcular Seguro desgravamen
   calcularSD(): void {
     const monto = this.form.get('hmonto')?.value || 0;
     this.importeSD = monto * (0.14 / 100);
   }
+
   calcularTCEA(): void {
     const fechaVencimiento = new Date(this.form.get('hfecha')?.value);
     const fechaDescuento = new Date(this.form.get('hfecha2')?.value);
@@ -166,27 +213,74 @@ export class LetradecambioComponent {
   }
   calcularDescuento(): void {
     const monto = this.form.get('hmonto')?.value || 0;
-    const tasaTEA = this.form.get('htasa')?.value || 0;
+    const tasa = this.form.get('htasa')?.value || 0;
+    const tipoTasa = this.form.get('htipotasa')?.value; // "Nominal" o "Efectiva"
+    const capitalizacion = this.form.get('hcapitalizacion')?.value || 0; // Solo para Nominal
+    const tiempoSeleccionado = this.form.get('httasa')?.value; // Tiempo seleccionado (diaria, mensual, etc.)
     const fechaVencimiento = new Date(this.form.get('hfecha')?.value);
     const fechaDescuento = new Date(this.form.get('hfecha2')?.value);
 
-    if (!monto || !tasaTEA || isNaN(fechaVencimiento.getTime()) || isNaN(fechaDescuento.getTime())) {
-      this.importeDescuento = 0;
-      return;
+    if (!monto || !tasa || isNaN(fechaVencimiento.getTime()) || isNaN(fechaDescuento.getTime())) {
+        console.error("Error: Datos inválidos.");
+        this.importeDescuento = 0;
+        return;
     }
 
     // Calcular la diferencia de días entre las fechas
     const dias = (fechaVencimiento.getTime() - fechaDescuento.getTime()) / (1000 * 60 * 60 * 24);
 
-    // Convertir la TEA en una Tasa Efectiva a N días (TEn)
-    const TEn = Math.pow(1 + tasaTEA / 100, dias / 360) - 1;
+    if (dias <= 0) {
+        console.error("Error: La fecha de vencimiento debe ser posterior a la fecha de descuento.");
+        this.importeDescuento = 0;
+        return;
+    }
+
+    let TEn = 0; // Tasa efectiva a N días
+
+    if (tipoTasa === 'Nominal') {
+      const tiempo = this.listatiempos.find(t => t.id === tiempoSeleccionado);
+        if (!tiempo) {
+            console.error("Error: Tipo de tiempo no válido.");
+            this.importeDescuento = 0;
+            return;
+        }
+        if (!capitalizacion || capitalizacion <= 0) {
+            console.error("Error: La capitalización debe ser mayor a 0 para tasas nominales.");
+            this.importeDescuento = 0;
+            return;
+        }
+        //////////////////////////////
+        // Convertir tasa nominal a efectiva periódica (TEP)
+        const TEP = Math.pow(1 + (tasa/100)/(tiempo.dias/capitalizacion),360/capitalizacion) - 1;
+        console.log(TEP)
+        // Convertir la TEP a tasa efectiva a N días (TEn)
+        TEn = Math.pow(1 + TEP, dias / 360) - 1; 
+        console.log(TEn)
+    } else if (tipoTasa === 'Efectiva') {
+        // Obtener los días del tiempo seleccionado (diario, mensual, etc.)
+        const tiempo = this.listatiempos.find(t => t.id === tiempoSeleccionado);
+        if (!tiempo) {
+            console.error("Error: Tipo de tiempo no válido.");
+            this.importeDescuento = 0;
+            return;
+        }
+
+        // Convertir la tasa efectiva seleccionada a tasa efectiva a N días
+        TEn = Math.pow(1 + tasa / 100, dias / tiempo.dias) - 1;
+    } else {
+        console.error("Error: Tipo de tasa no válido.");
+        this.importeDescuento = 0;
+        return;
+    }
 
     // Calcular la tasa de descuento
     const tasaDescuento = TEn / (1 + TEn);
 
     // Calcular el importe de descuento
     this.importeDescuento = monto * tasaDescuento;
-  }
+}
+
+
   generarMontorecibido(): void {
     const monto = this.form.get('hmonto')?.value || 0;
     this.MontoRecibido = monto - 20 - 2 - this.importeSD - this.importeRetencion;

@@ -14,7 +14,7 @@
         <!-- Moneda -->
         <mat-form-field class="full-width">
           <mat-label>Moneda</mat-label>
-          <mat-select formControlName="hcurso">
+          <mat-select formControlName="hmoneda">
             @for (food of listaMonedas; track food) {
             <mat-option [value]="food.id_moneda">{{ food.nombre }}</mat-option>
             }
@@ -34,7 +34,7 @@
           <mat-label>Tiempo de Tasa </mat-label>
           <mat-select formControlName="httasa">
             @for (food of listatiempos; track food) {
-            <mat-option [value]="food.nombre">{{ food.nombre }}</mat-option>
+            <mat-option [value]="food.id">{{ food.nombre }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -43,13 +43,13 @@
           <mat-label>Capitalizacion</mat-label>
           <mat-select formControlName="hcapitalizacion">
             @for (food of listatiempos; track food) {
-            <mat-option [value]="food.nombre">{{ food.nombre }}</mat-option>
+            <mat-option [value]="food.dias">{{ food.nombre }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
         <!-- Tasa de descuento -->
         <mat-form-field class="full-width">
-          <mat-label>Tasa de Descuento (TEA)(%)</mat-label>
+          <mat-label>Tasa de Descuento </mat-label>
           <input matInput type="number" formControlName="htasa" min="0" max="100">
         </mat-form-field>
 
