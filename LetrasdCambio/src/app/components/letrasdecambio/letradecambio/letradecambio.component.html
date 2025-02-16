@@ -20,7 +20,33 @@
             }
           </mat-select>
         </mat-form-field>
-
+        <!-- Seleccionar tipo de tasa: Nominal o efectiva -->
+        <mat-form-field class="full-width">
+          <mat-label>Tipo de Tasa </mat-label>
+          <mat-select formControlName="htipotasa">
+            @for (food of listtasa; track food) {
+            <mat-option [value]="food.nombre">{{ food.nombre }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <!-- Seleccionar tipo de tasa Nominal: Diaria, semanal,quincenal,mensual, bimestral,trimestral,cuatrimesral,semestral,anual-->
+        <mat-form-field class="full-width">
+          <mat-label>Tiempo de Tasa </mat-label>
+          <mat-select formControlName="httasa">
+            @for (food of listatiempos; track food) {
+            <mat-option [value]="food.nombre">{{ food.nombre }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <!-- Seleccionar capitalizacion, que este activa si es que se selecciono nominal -->
+        <mat-form-field class="full-width">
+          <mat-label>Capitalizacion</mat-label>
+          <mat-select formControlName="hcapitalizacion">
+            @for (food of listatiempos; track food) {
+            <mat-option [value]="food.nombre">{{ food.nombre }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
         <!-- Tasa de descuento -->
         <mat-form-field class="full-width">
           <mat-label>Tasa de Descuento (TEA)(%)</mat-label>

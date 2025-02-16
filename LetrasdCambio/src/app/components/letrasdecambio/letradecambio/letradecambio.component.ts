@@ -33,6 +33,22 @@ export class LetradecambioComponent {
   deudor: string = '';
   acreedor: string = '';
   //
+  listtasa = [
+    { id: 1, nombre: "Efectiva" },
+    { id: 2, nombre: "Nominal" }
+  ]
+  listatiempos = [
+    { id: 1, nombre: "Diaria", dias: 1 },
+    { id: 2, nombre: "Semanal", dias: 7 },
+    { id: 3, nombre: "Quincenal", dias: 15 },
+    { id: 4, nombre: "Mensual", dias: 30 },
+    { id: 5, nombre: "Bimestral", dias: 60 },
+    { id: 6, nombre: "Trimestral", dias: 90 },
+    { id: 7, nombre: "Cuatrimestral", dias: 120 },
+    { id: 8, nombre: "Semestral", dias: 180 },
+    { id: 9, nombre: "Anual", dias: 360 }
+  ];
+
   listaMonedas = [
     { id_moneda: 'USD', nombre: 'Dólar Estadounidense' },
     { id_moneda: 'EUR', nombre: 'Euro' },
@@ -60,16 +76,34 @@ export class LetradecambioComponent {
       hdeudor: ['', Validators.required],
       hacredor: ['', Validators.required],
       hcurso: ['', Validators.required],
+      hcapitalizacion: [{ value: '', disabled: true }], // Inicialmente deshabilitado
+      httasa: ['', Validators.required],
+      htipotasa: ['', Validators.required],
       htasa: ['', [Validators.required, Validators.min(0), Validators.max(100)]],
       htasar: [{ value: '', disabled: true }, [Validators.min(0), Validators.max(100)]],
       aplicarRetencion: [false]
     });
+     // Habilitar o deshabilitar `hcapitalizacion` dependiendo de `htipotasa`
+  this.form.get('htipotasa')?.valueChanges.subscribe(value => {
+    const capitalizacionControl = this.form.get('hcapitalizacion');
+
+    if (value === 'Nominal') {
+      capitalizacionControl?.enable();
+      capitalizacionControl?.setValidators(Validators.required);
+    } else {
+      capitalizacionControl?.disable();
+      capitalizacionControl?.setValue(null);
+      capitalizacionControl?.clearValidators();
+    }
+
+    capitalizacionControl?.updateValueAndValidity();
+  });
 
     this.form.get('hfecha')?.valueChanges.subscribe(() => {
       this.calcularDescuento();
       this.calcularTCEA();
     });
-    
+
     this.form.get('hfecha2')?.valueChanges.subscribe(() => {
       this.calcularDescuento();
       this.calcularTCEA();
@@ -82,7 +116,7 @@ export class LetradecambioComponent {
       this.generarMontoentregado();
       this.calcularTCEA();
     });
-    this.form.get('htasar')?.valueChanges.subscribe(() =>{
+    this.form.get('htasar')?.valueChanges.subscribe(() => {
       this.calcularRetencion()
       this.generarMontorecibido();
       this.generarMontoentregado();
@@ -115,21 +149,21 @@ export class LetradecambioComponent {
     this.importeSD = monto * (0.14 / 100);
   }
   calcularTCEA(): void {
-  const fechaVencimiento = new Date(this.form.get('hfecha')?.value);
-  const fechaDescuento = new Date(this.form.get('hfecha2')?.value);
-  
-  // Calcular la diferencia de días entre las fechas
-  const dias = (fechaVencimiento.getTime() - fechaDescuento.getTime()) / (1000 * 60 * 60 * 24);
-  
-  // Validar que los días sean mayores que 0 para evitar divisiones por cero
-  if (dias <= 0) {
-    console.error("Error: La fecha de vencimiento debe ser posterior a la fecha de descuento.");
-    return;
-  }
+    const fechaVencimiento = new Date(this.form.get('hfecha')?.value);
+    const fechaDescuento = new Date(this.form.get('hfecha2')?.value);
 
-  // Calcular la TCEA
-  this.TCEA = (Math.pow(this.MontoEntregado/this.MontoRecibido,(360 / dias))-1)*100;
-}
+    // Calcular la diferencia de días entre las fechas
+    const dias = (fechaVencimiento.getTime() - fechaDescuento.getTime()) / (1000 * 60 * 60 * 24);
+
+    // Validar que los días sean mayores que 0 para evitar divisiones por cero
+    if (dias <= 0) {
+      console.error("Error: La fecha de vencimiento debe ser posterior a la fecha de descuento.");
+      return;
+    }
+
+    // Calcular la TCEA
+    this.TCEA = (Math.pow(this.MontoEntregado / this.MontoRecibido, (360 / dias)) - 1) * 100;
+  }
   calcularDescuento(): void {
     const monto = this.form.get('hmonto')?.value || 0;
     const tasaTEA = this.form.get('htasa')?.value || 0;
@@ -155,11 +189,11 @@ export class LetradecambioComponent {
   }
   generarMontorecibido(): void {
     const monto = this.form.get('hmonto')?.value || 0;
-    this.MontoRecibido=monto-20-2-this.importeSD-this.importeRetencion;
+    this.MontoRecibido = monto - 20 - 2 - this.importeSD - this.importeRetencion;
   }
   generarMontoentregado(): void {
     const monto = this.form.get('hmonto')?.value || 0;
-    this.MontoEntregado=monto+15+6-this.importeRetencion;
+    this.MontoEntregado = monto + 15 + 6 - this.importeRetencion;
   }
   generarLetra(): void {
     console.log('Letra de Cambio Generada:', {
