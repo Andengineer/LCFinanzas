@@ -298,7 +298,10 @@ export class LetradecambioComponent {
       this.letradecambio.importe_descontado = this.importeDescuento;
       this.letradecambio.importe_retenido = this.importeRetencion;
 
-      this.lS.insert(this.letradecambio).subscribe(() => {
+      this.lS.insert(this.letradecambio).subscribe(d => {
+
+        this.lS.list().subscribe(data => {this.lS.setList(data);});
+
         console.log('Letra de cambio generada');
         this.snackBar.open('Letra de cambio registrada', 'Cerrar', {
           duration: 3000,  // Duración del mensaje (3 segundos)

@@ -9,13 +9,13 @@ import { LetradecambioService } from '../../../services/letradecambio.service';
 
 @Component({
   selector: 'app-listarletras',
-  imports: [MatTableModule,MatIconModule,RouterModule,MatPaginatorModule],
+  imports: [MatTableModule, MatIconModule, RouterModule, MatPaginatorModule],
   templateUrl: './listarletras.component.html',
   styleUrl: './listarletras.component.css'
 })
 export class ListarletrasComponent implements OnInit {
-  dataSource:MatTableDataSource<Letrasdecambio>= new MatTableDataSource()
-  displayedColumns:string[]=['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10','c11','c12','accion01']
+  dataSource: MatTableDataSource<Letrasdecambio> = new MatTableDataSource()
+  displayedColumns: string[] = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'accion01']
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   constructor(private cS: LetradecambioService, private snackBar: MatSnackBar) { }
   ngOnInit(): void {
@@ -25,7 +25,6 @@ export class ListarletrasComponent implements OnInit {
     });
 
     this.cS.getList().subscribe(data => {
-      this.cS.setList(data);
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
     });
@@ -57,6 +56,6 @@ export class ListarletrasComponent implements OnInit {
   }
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
-    
+
   }
 }
