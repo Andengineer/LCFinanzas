@@ -2,35 +2,77 @@
     <h2>Búsqueda de Letras de Cambio</h2>
   
     <mat-form-field [formGroup]="form">
-        <mat-label>Fecha de Vencimiento</mat-label>
+      <mat-label>Fecha de Vencimiento</mat-label>
       <input matInput [matDatepicker]="picker" formControlName="fechaBusqueda" readonly>
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
+      <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
+  
     <button (click)="buscarPorFecha()">Buscar</button>
   
-    <div *ngIf="letras.length > 0">
-      <h3>Resultados:</h3>
-      <table>
-        <tr>
-          <th>Moneda</th>
-          <th>Monto</th>
-          <th>Fecha Vencimiento</th>
-          <th>Deudor</th>
-          <th>Acreedor</th>
-        </tr>
-        <tr *ngFor="let letra of letras">
-          <td>{{ letra.moneda }}</td>
-          <td>{{ letra.monto }}</td>
-          <td>{{ letra.fechav | date }}</td>
-          <td>{{ letra.deudor }}</td>
-          <td>{{ letra.acreedor }}</td>
-        </tr>
+    <div class="table-responsive">
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        <!-- Definición de las columnas como antes -->
+        <ng-container matColumnDef="c1">
+            <th mat-header-cell *matHeaderCellDef> ID </th>
+            <td mat-cell *matCellDef="let element"> {{element.id_letra}} </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="c2">
+            <th mat-header-cell *matHeaderCellDef> Acreedor </th>
+            <td mat-cell *matCellDef="let element"> {{element.acreedor}} </td>
+        </ng-container>
+
+        <!-- Weight Column -->
+        <ng-container matColumnDef="c3">
+            <th mat-header-cell *matHeaderCellDef> Deudor</th>
+            <td mat-cell *matCellDef="let element"> {{element.deudor}} </td>
+        </ng-container>
+        <ng-container matColumnDef="c4">
+            <th mat-header-cell *matHeaderCellDef> Monto</th>
+            <td mat-cell *matCellDef="let element"> {{element.monto}} </td>
+        </ng-container>
+        <ng-container matColumnDef="c5">
+            <th mat-header-cell *matHeaderCellDef> Moneda</th>
+            <td mat-cell *matCellDef="let element"> {{element.moneda}} </td>
+        </ng-container>
+        <ng-container matColumnDef="c6">
+            <th mat-header-cell *matHeaderCellDef> Tasa de Descuento</th>
+            <td mat-cell *matCellDef="let element"> {{element.tea}} % </td>
+        </ng-container>
+        <ng-container matColumnDef="c7">
+            <th mat-header-cell *matHeaderCellDef> Fecha de Descuento</th>
+            <td mat-cell *matCellDef="let element"> {{element.fechad}} </td>
+        </ng-container>
+        <ng-container matColumnDef="c8">
+            <th mat-header-cell *matHeaderCellDef> Fecha de Vencimiento</th>
+            <td mat-cell *matCellDef="let element"> {{element.fechav}} </td>
+        </ng-container>
+        <ng-container matColumnDef="c9">
+            <th mat-header-cell *matHeaderCellDef> Importe retenido</th>
+            <td mat-cell *matCellDef="let element"> {{element.importe_retenido}} </td>
+        </ng-container>
+        <ng-container matColumnDef="c10">
+            <th mat-header-cell *matHeaderCellDef> Importe descontado</th>
+            <td mat-cell *matCellDef="let element"> {{element.importe_descontado}} </td>
+        </ng-container>
+        <ng-container matColumnDef="c11">
+            <th mat-header-cell *matHeaderCellDef> Importe recibido</th>
+            <td mat-cell *matCellDef="let element"> {{element.monto_recibido}} </td>
+        </ng-container>
+        <ng-container matColumnDef="c12">
+            <th mat-header-cell *matHeaderCellDef> Importe entregado</th>
+            <td mat-cell *matCellDef="let element"> {{element.monto_entregado}} </td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
     </div>
   
-    <div *ngIf="letras.length === 0">
-      <p>No hay letras de cambio para la fecha seleccionada.</p>
+    <div class="paginator">
+      <mat-paginator [pageSizeOptions]="[4, 7, 10]" showFirstLastButtons></mat-paginator>
     </div>
   </div>
   
