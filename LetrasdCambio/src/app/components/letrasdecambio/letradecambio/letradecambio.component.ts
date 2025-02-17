@@ -12,6 +12,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { LetradecambioService } from '../../../services/letradecambio.service';
 import { Letrasdecambio } from '../../../models/Letrasdecambio';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-letradecambio',
@@ -66,7 +67,7 @@ export class LetradecambioComponent {
     { id_moneda: 'INR', nombre: 'Rupia India' },
     { id_moneda: 'KRW', nombre: 'Won Surcoreano' }
   ];
-  constructor(private formBuilder: FormBuilder, private lS: LetradecambioService,private snackBar: MatSnackBar) { }
+  constructor(private formBuilder: FormBuilder, private lS: LetradecambioService, private snackBar: MatSnackBar, private router: Router) { }
   ngOnInit(): void {
     this.form = this.formBuilder.group({
       hmonto: ['', Validators.required],
@@ -296,7 +297,7 @@ export class LetradecambioComponent {
       this.letradecambio.monto_entregado = this.MontoEntregado;
       this.letradecambio.importe_descontado = this.importeDescuento;
       this.letradecambio.importe_retenido = this.importeRetencion;
-  
+
       this.lS.insert(this.letradecambio).subscribe(() => {
         console.log('Letra de cambio generada');
         this.snackBar.open('Letra de cambio registrada', 'Cerrar', {
@@ -304,7 +305,7 @@ export class LetradecambioComponent {
           verticalPosition: 'top', // Posición superior
           horizontalPosition: 'center', // Posición centrada
           panelClass: ['snackbar-success'] // Clase personalizada (opcional)
-        });
+        }); this.router.navigate(['letrasdecambio']);
       });
     }
   }
