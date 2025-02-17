@@ -1,2 +1,16 @@
-<router-outlet></router-outlet>
-<app-letradecambio></app-letradecambio>
+<div>
+    <mat-toolbar>
+        <button [matMenuTriggerFor]="menu" mat-icon-button class="example-icon" aria-label="Menú de opciones">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <span>Enterprise</span>
+        <span class="example-spacer"></span>
+    </mat-toolbar>
+
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item routerLink="/letrasdecambio"><mat-icon>playlist_add_check</mat-icon> Listar </button>
+        <button mat-menu-item routerLink="/letrasdecambio/nuevo"><mat-icon>playlist_add</mat-icon> Registrar </button>
+    </mat-menu>
+
+    <router-outlet></router-outlet>
+</div>
