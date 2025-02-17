@@ -1,0 +1,36 @@
+<div class="container">
+    <h2>Búsqueda de Letras de Cambio</h2>
+  
+    <mat-form-field [formGroup]="form">
+        <mat-label>Fecha de Vencimiento</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="fechaBusqueda" readonly>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <button (click)="buscarPorFecha()">Buscar</button>
+  
+    <div *ngIf="letras.length > 0">
+      <h3>Resultados:</h3>
+      <table>
+        <tr>
+          <th>Moneda</th>
+          <th>Monto</th>
+          <th>Fecha Vencimiento</th>
+          <th>Deudor</th>
+          <th>Acreedor</th>
+        </tr>
+        <tr *ngFor="let letra of letras">
+          <td>{{ letra.moneda }}</td>
+          <td>{{ letra.monto }}</td>
+          <td>{{ letra.fechav | date }}</td>
+          <td>{{ letra.deudor }}</td>
+          <td>{{ letra.acreedor }}</td>
+        </tr>
+      </table>
+    </div>
+  
+    <div *ngIf="letras.length === 0">
+      <p>No hay letras de cambio para la fecha seleccionada.</p>
+    </div>
+  </div>
+  

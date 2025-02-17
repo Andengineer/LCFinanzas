@@ -26,4 +26,8 @@ export class LetradecambioService {
   setList(listaNueva:Letrasdecambio[]){
     this.listaCambio.next(listaNueva);
   }
+  buscarfecha(fecha: String) {
+    return this.http.get<Letrasdecambio[]>(`${this.url}/lfechas/${fecha}`);
+  }
+  
 }
