@@ -9,6 +9,8 @@ import { CommonModule } from '@angular/common';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { LetradecambioService } from '../../../services/letradecambio.service';
+import { Letrasdecambio } from '../../../models/Letrasdecambio';
 
 @Component({
   selector: 'app-letradecambio',
@@ -27,6 +29,8 @@ export class LetradecambioComponent {
   MontoRecibido: number = 0;
   MontoEntregado: number = 0;
   TCEA: number = 0;
+  tasadedescuento: number = 0;
+  letradecambio:Letrasdecambio=new Letrasdecambio();
   //
   monto: number = 0;
   fechaVencimiento: string = '';
@@ -67,7 +71,7 @@ export class LetradecambioComponent {
     { id_moneda: 'INR', nombre: 'Rupia India' },
     { id_moneda: 'KRW', nombre: 'Won Surcoreano' }
   ];
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(private formBuilder: FormBuilder, private lS:LetradecambioService) { }
   ngOnInit(): void {
     this.form = this.formBuilder.group({
       hmonto: ['', Validators.required],
@@ -275,7 +279,7 @@ export class LetradecambioComponent {
 
     // Calcular la tasa de descuento
     const tasaDescuento = TEn / (1 + TEn);
-
+    this.tasadedescuento=tasaDescuento*100;
     // Calcular el importe de descuento
     this.importeDescuento = monto * tasaDescuento;
 }
@@ -290,12 +294,19 @@ export class LetradecambioComponent {
     this.MontoEntregado = monto + 15 + 6 - this.importeRetencion;
   }
   generarLetra(): void {
-    console.log('Letra de Cambio Generada:', {
-      monto: this.form.value.hmonto,
-      fechaVencimiento: this.form.value.hfecha,
-      deudor: this.form.value.hdeudor,
-      acreedor: this.form.value.hacredor
-    });
+    if(this.form.valid){
+      this.letradecambio.moneda=this.form.get('hmoneda')?.value;
+      this.letradecambio.monto=this.form.get('hmonto')?.value;
+      this.letradecambio.tea=this.tasadedescuento;
+      this.letradecambio.fechav=new Date(this.form.get('hfecha')?.value);
+      this.letradecambio.fechad=new Date(this.form.get('hfecha2')?.value);
+      this.letradecambio.deudor=this.form.get('hdeudor')?.value;
+      this.letradecambio.acreedor=this.form.get('hacredor')?.value;
+      this.letradecambio.monto_recibido=this.MontoRecibido;
+      this.letradecambio.monto_entregado=this.MontoEntregado;
+      this.letradecambio.importe_descontado=this.importeDescuento;
+      this.letradecambio.importe_retenido=this.importeRetencion;
+    }
   }
 
 }
