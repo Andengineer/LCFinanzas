@@ -11,6 +11,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { LetradecambioService } from '../../../services/letradecambio.service';
 import { Letrasdecambio } from '../../../models/Letrasdecambio';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-letradecambio',
@@ -30,13 +31,7 @@ export class LetradecambioComponent {
   MontoEntregado: number = 0;
   TCEA: number = 0;
   tasadedescuento: number = 0;
-  letradecambio:Letrasdecambio=new Letrasdecambio();
-  //
-  monto: number = 0;
-  fechaVencimiento: string = '';
-  deudor: string = '';
-  acreedor: string = '';
-  //
+  letradecambio: Letrasdecambio = new Letrasdecambio();
   listtasa = [
     { id: 1, nombre: "Efectiva" },
     { id: 2, nombre: "Nominal" }
@@ -71,7 +66,7 @@ export class LetradecambioComponent {
     { id_moneda: 'INR', nombre: 'Rupia India' },
     { id_moneda: 'KRW', nombre: 'Won Surcoreano' }
   ];
-  constructor(private formBuilder: FormBuilder, private lS:LetradecambioService) { }
+  constructor(private formBuilder: FormBuilder, private lS: LetradecambioService,private snackBar: MatSnackBar) { }
   ngOnInit(): void {
     this.form = this.formBuilder.group({
       hmonto: ['', Validators.required],
@@ -186,8 +181,6 @@ export class LetradecambioComponent {
       }
     });
   }
-
-
   calcularRetencion(): void {
     const monto = this.form.get('hmonto')?.value || 0;
     const tasa = this.form.get('htasar')?.value || 0;
@@ -198,7 +191,6 @@ export class LetradecambioComponent {
     const monto = this.form.get('hmonto')?.value || 0;
     this.importeSD = monto * (0.14 / 100);
   }
-
   calcularTCEA(): void {
     const fechaVencimiento = new Date(this.form.get('hfecha')?.value);
     const fechaDescuento = new Date(this.form.get('hfecha2')?.value);
@@ -225,66 +217,64 @@ export class LetradecambioComponent {
     const fechaDescuento = new Date(this.form.get('hfecha2')?.value);
 
     if (!monto || !tasa || isNaN(fechaVencimiento.getTime()) || isNaN(fechaDescuento.getTime())) {
-        console.error("Error: Datos inválidos.");
-        this.importeDescuento = 0;
-        return;
+      console.error("Error: Datos inválidos.");
+      this.importeDescuento = 0;
+      return;
     }
 
     // Calcular la diferencia de días entre las fechas
     const dias = (fechaVencimiento.getTime() - fechaDescuento.getTime()) / (1000 * 60 * 60 * 24);
 
     if (dias <= 0) {
-        console.error("Error: La fecha de vencimiento debe ser posterior a la fecha de descuento.");
-        this.importeDescuento = 0;
-        return;
+      console.error("Error: La fecha de vencimiento debe ser posterior a la fecha de descuento.");
+      this.importeDescuento = 0;
+      return;
     }
 
     let TEn = 0; // Tasa efectiva a N días
 
     if (tipoTasa === 'Nominal') {
       const tiempo = this.listatiempos.find(t => t.id === tiempoSeleccionado);
-        if (!tiempo) {
-            console.error("Error: Tipo de tiempo no válido.");
-            this.importeDescuento = 0;
-            return;
-        }
-        if (!capitalizacion || capitalizacion <= 0) {
-            console.error("Error: La capitalización debe ser mayor a 0 para tasas nominales.");
-            this.importeDescuento = 0;
-            return;
-        }
-        //////////////////////////////
-        // Convertir tasa nominal a efectiva periódica (TEP)
-        const TEP = Math.pow(1 + (tasa/100)/(tiempo.dias/capitalizacion),360/capitalizacion) - 1;
-        console.log(TEP)
-        // Convertir la TEP a tasa efectiva a N días (TEn)
-        TEn = Math.pow(1 + TEP, dias / 360) - 1; 
-        console.log(TEn)
-    } else if (tipoTasa === 'Efectiva') {
-        // Obtener los días del tiempo seleccionado (diario, mensual, etc.)
-        const tiempo = this.listatiempos.find(t => t.id === tiempoSeleccionado);
-        if (!tiempo) {
-            console.error("Error: Tipo de tiempo no válido.");
-            this.importeDescuento = 0;
-            return;
-        }
-
-        // Convertir la tasa efectiva seleccionada a tasa efectiva a N días
-        TEn = Math.pow(1 + tasa / 100, dias / tiempo.dias) - 1;
-    } else {
-        console.error("Error: Tipo de tasa no válido.");
+      if (!tiempo) {
+        console.error("Error: Tipo de tiempo no válido.");
         this.importeDescuento = 0;
         return;
+      }
+      if (!capitalizacion || capitalizacion <= 0) {
+        console.error("Error: La capitalización debe ser mayor a 0 para tasas nominales.");
+        this.importeDescuento = 0;
+        return;
+      }
+      //////////////////////////////
+      // Convertir tasa nominal a efectiva periódica (TEP)
+      const TEP = Math.pow(1 + (tasa / 100) / (tiempo.dias / capitalizacion), 360 / capitalizacion) - 1;
+      console.log(TEP)
+      // Convertir la TEP a tasa efectiva a N días (TEn)
+      TEn = Math.pow(1 + TEP, dias / 360) - 1;
+      console.log(TEn)
+    } else if (tipoTasa === 'Efectiva') {
+      // Obtener los días del tiempo seleccionado (diario, mensual, etc.)
+      const tiempo = this.listatiempos.find(t => t.id === tiempoSeleccionado);
+      if (!tiempo) {
+        console.error("Error: Tipo de tiempo no válido.");
+        this.importeDescuento = 0;
+        return;
+      }
+
+      // Convertir la tasa efectiva seleccionada a tasa efectiva a N días
+      TEn = Math.pow(1 + tasa / 100, dias / tiempo.dias) - 1;
+    } else {
+      console.error("Error: Tipo de tasa no válido.");
+      this.importeDescuento = 0;
+      return;
     }
 
     // Calcular la tasa de descuento
     const tasaDescuento = TEn / (1 + TEn);
-    this.tasadedescuento=tasaDescuento*100;
+    this.tasadedescuento = tasaDescuento * 100;
     // Calcular el importe de descuento
     this.importeDescuento = monto * tasaDescuento;
-}
-
-
+  }
   generarMontorecibido(): void {
     const monto = this.form.get('hmonto')?.value || 0;
     this.MontoRecibido = monto - 20 - 2 - this.importeSD - this.importeRetencion;
@@ -294,18 +284,28 @@ export class LetradecambioComponent {
     this.MontoEntregado = monto + 15 + 6 - this.importeRetencion;
   }
   generarLetra(): void {
-    if(this.form.valid){
-      this.letradecambio.moneda=this.form.get('hmoneda')?.value;
-      this.letradecambio.monto=this.form.get('hmonto')?.value;
-      this.letradecambio.tea=this.tasadedescuento;
-      this.letradecambio.fechav=new Date(this.form.get('hfecha')?.value);
-      this.letradecambio.fechad=new Date(this.form.get('hfecha2')?.value);
-      this.letradecambio.deudor=this.form.get('hdeudor')?.value;
-      this.letradecambio.acreedor=this.form.get('hacredor')?.value;
-      this.letradecambio.monto_recibido=this.MontoRecibido;
-      this.letradecambio.monto_entregado=this.MontoEntregado;
-      this.letradecambio.importe_descontado=this.importeDescuento;
-      this.letradecambio.importe_retenido=this.importeRetencion;
+    if (this.form.valid) {
+      this.letradecambio.moneda = this.form.get('hmoneda')?.value;
+      this.letradecambio.monto = this.form.get('hmonto')?.value;
+      this.letradecambio.tea = this.tasadedescuento;
+      this.letradecambio.fechav = new Date(this.form.get('hfecha')?.value);
+      this.letradecambio.fechad = new Date(this.form.get('hfecha2')?.value);
+      this.letradecambio.deudor = this.form.get('hdeudor')?.value;
+      this.letradecambio.acreedor = this.form.get('hacredor')?.value;
+      this.letradecambio.monto_recibido = this.MontoRecibido;
+      this.letradecambio.monto_entregado = this.MontoEntregado;
+      this.letradecambio.importe_descontado = this.importeDescuento;
+      this.letradecambio.importe_retenido = this.importeRetencion;
+  
+      this.lS.insert(this.letradecambio).subscribe(() => {
+        console.log('Letra de cambio generada');
+        this.snackBar.open('Letra de cambio registrada', 'Cerrar', {
+          duration: 3000,  // Duración del mensaje (3 segundos)
+          verticalPosition: 'top', // Posición superior
+          horizontalPosition: 'center', // Posición centrada
+          panelClass: ['snackbar-success'] // Clase personalizada (opcional)
+        });
+      });
     }
   }
 
