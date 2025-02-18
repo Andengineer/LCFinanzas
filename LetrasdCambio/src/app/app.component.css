@@ -1,0 +1,58 @@
+/* Estilo general */
+mat-toolbar {
+    background: #6A0DAD; /* Morado oscuro */
+    color: white;
+    font-weight: bold;
+    padding: 0 16px;
+}
+
+/* Iconos del menú */
+.example-icon {
+    color: white;
+}
+
+/* Espaciador para alinear el título */
+.example-spacer {
+    flex: 1 1 auto;
+}
+
+/* Estilo del menú */
+mat-menu {
+    background: #8E24AA; /* Morado intermedio */
+    color: white;
+}
+
+/* Estilo de los botones del menú */
+mat-menu-item {
+    color: white;
+    font-weight: 500;
+}
+
+mat-menu-item:hover {
+    background: #BA68C8; /* Morado claro */
+}
+
+/* Estilo de los iconos del menú */
+mat-icon {
+    color: white;
+    margin-right: 8px;
+}
+
+/* Estilo para los botones activos (cuando se seleccionan) */
+button[mat-menu-item]:hover,
+button[mat-menu-item]:focus {
+    background-color: #AB47BC; /* Morado más claro */
+    color: white;
+}
+
+/* Animación sutil al pasar el mouse */
+button[mat-menu-item] {
+    transition: background 0.3s ease-in-out;
+}
+
+/* Estilo para el contenedor */
+div {
+    background: #F3E5F5; /* Fondo lila claro */
+    min-height: 100vh;
+    padding: 20px;
+}
