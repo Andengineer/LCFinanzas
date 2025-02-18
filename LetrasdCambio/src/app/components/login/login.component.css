@@ -1,0 +1,16 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .login-card {
+    padding: 20px;
+    width: 300px;
+    text-align: center;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
