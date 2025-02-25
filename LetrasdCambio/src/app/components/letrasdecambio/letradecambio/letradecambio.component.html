@@ -5,20 +5,33 @@
     <!-- Contenedor del formulario -->
     <div class="form-container">
       <form [formGroup]="form" (submit)="generarLetra()">
-        <!-- Monto -->
-        <mat-form-field class="full-width">
-          <mat-label>Monto</mat-label>
-          <input matInput type="number" formControlName="hmonto">
+        <h3>Cartera</h3>
+        <!-- Acreedor -->
+        <mat-form-field class="example-full-width">
+          <mat-label>Asociado</mat-label>
+          <mat-select formControlName="hacredor">
+            @for (food of listaAcreedores; track food) {
+            <mat-option [value]="food.id_cartera">{{food.acreedor}}</mat-option>
+            }
+          </mat-select>
         </mat-form-field>
 
         <!-- Moneda -->
         <mat-form-field class="full-width">
           <mat-label>Moneda</mat-label>
-          <mat-select formControlName="hmoneda">
-            @for (food of listaMonedas; track food) {
-            <mat-option [value]="food.id_moneda">{{ food.nombre }}</mat-option>
-            }
-          </mat-select>
+          <input matInput type="text" placeholder="Moneda" formControlName="hmoneda" readonly>
+        </mat-form-field>
+        <!-- Fecha de descuento -->
+
+        <mat-form-field class="full-width">
+          <mat-label>Fecha de Descuento</mat-label>
+          <input matInput type="text" placeholder="Fecha de descuento" formControlName="hfecha2" readonly>
+        </mat-form-field>
+        <h3>Letra</h3>
+        <!-- Monto -->
+        <mat-form-field class="full-width">
+          <mat-label>Monto</mat-label>
+          <input matInput type="number" formControlName="hmonto">
         </mat-form-field>
         <!-- Seleccionar tipo de tasa: Nominal o efectiva -->
         <mat-form-field class="full-width">
@@ -72,13 +85,7 @@
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
 
-        <!-- Fecha de descuento -->
-        <mat-form-field class="full-width">
-          <mat-label>Fecha de Descuento</mat-label>
-          <input matInput [matDatepicker]="picker2" formControlName="hfecha2" readonly>
-          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-          <mat-datepicker #picker2></mat-datepicker>
-        </mat-form-field>
+
 
         <!-- Deudor -->
         <mat-form-field class="full-width">
@@ -86,11 +93,7 @@
           <input matInput type="text" placeholder="Nombre del deudor" formControlName="hdeudor">
         </mat-form-field>
 
-        <!-- Acreedor -->
-        <mat-form-field class="full-width">
-          <mat-label>Acreedor</mat-label>
-          <input matInput type="text" placeholder="Nombre del acreedor" formControlName="hacredor">
-        </mat-form-field>
+
 
         <br>
         <div>
@@ -104,43 +107,43 @@
       <h3>Gastos/Costes Iniciales:</h3>
       <div class="monto">
         <strong>Comisión de estudio de riesgos:</strong>
-        <span>20.00000</span>
+        <span>20.00</span>
       </div>
       <div class="monto">
         <strong>Fotocopia:</strong>
-        <span>2.00000</span>
+        <span>2.00</span>
       </div>
       <div class="monto">
         <strong>Seguro Desgravamen (0.14%):</strong>
-        <span>{{ importeSD | number:'1.5-5' }}</span>
+        <span>{{ importeSD | number:'1.2-2' }}</span>
       </div>
       <h3>Gastos/Costes Finales:</h3>
       <div class="monto">
         <strong>Gastos de Administración:</strong>
-        <span>15.00000</span>
+        <span>15.00</span>
       </div>
       <div class="monto">
         <strong>Portes:</strong>
-        <span>6.00000</span>
+        <span>6.00</span>
       </div>
       <h3>Retención:</h3>
       <div class="monto">
         <strong>Importe de Retención:</strong>
-        <span>{{ importeRetencion | number:'1.5-5' }}</span>
+        <span>{{ importeRetencion | number:'1.2-2' }}</span>
       </div>
 
       <h3>Descuento:</h3>
       <div class="monto">
         <strong>Importe de Descuento:</strong>
-        <span>{{ importeDescuento | number:'1.5-5' }}</span>
+        <span>{{ importeDescuento | number:'1.2-2' }}</span>
       </div>
       <div class="monto">
         <strong>Monto Recibido:</strong>
-        <span>{{ MontoRecibido | number:'1.5-5' }}</span>
+        <span>{{ MontoRecibido | number:'1.2-2' }}</span>
       </div>
       <div class="monto">
         <strong>Monto Entregado:</strong>
-        <span>{{ MontoEntregado | number:'1.5-5' }}</span>
+        <span>{{ MontoEntregado | number:'1.2-2' }}</span>
       </div>
       <div class="monto">
         <strong>TCEA:</strong>
@@ -148,7 +151,7 @@
       </div>
       <div class="monto">
         <strong>Tasa de Descuento:</strong>
-        <span>{{  tasadedescuento| number:'1.5-5' }} %</span>
+        <span>{{ tasadedescuento| number:'1.5-5' }} %</span>
       </div>
     </div>
   </div>

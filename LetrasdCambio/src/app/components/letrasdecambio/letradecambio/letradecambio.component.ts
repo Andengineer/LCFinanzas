@@ -13,6 +13,8 @@ import { LetradecambioService } from '../../../services/letradecambio.service';
 import { Letrasdecambio } from '../../../models/Letrasdecambio';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { CarterasService } from '../../../services/carteras.service';
+import { Carteras } from '../../../models/Carteras';
 
 @Component({
   selector: 'app-letradecambio',
@@ -23,6 +25,8 @@ import { Router } from '@angular/router';
   styleUrl: './letradecambio.component.css'
 })
 export class LetradecambioComponent {
+  id_cartera: number = 0
+  listaAcreedores: Carteras[] = []
   disableSelect = new FormControl(false);
   form: FormGroup = new FormGroup({});
   importeRetencion: number = 0;
@@ -48,27 +52,12 @@ export class LetradecambioComponent {
     { id: 8, nombre: "Semestral", dias: 180 },
     { id: 9, nombre: "Anual", dias: 360 }
   ];
-
-  listaMonedas = [
-    { id_moneda: 'USD', nombre: 'Dólar Estadounidense' },
-    { id_moneda: 'EUR', nombre: 'Euro' },
-    { id_moneda: 'PEN', nombre: 'Sol Peruano' },
-    { id_moneda: 'GBP', nombre: 'Libra Esterlina' },
-    { id_moneda: 'JPY', nombre: 'Yen Japonés' },
-    { id_moneda: 'CNY', nombre: 'Yuan Chino' },
-    { id_moneda: 'CHF', nombre: 'Franco Suizo' },
-    { id_moneda: 'CAD', nombre: 'Dólar Canadiense' },
-    { id_moneda: 'AUD', nombre: 'Dólar Australiano' },
-    { id_moneda: 'BRL', nombre: 'Real Brasileño' },
-    { id_moneda: 'MXN', nombre: 'Peso Mexicano' },
-    { id_moneda: 'ARS', nombre: 'Peso Argentino' },
-    { id_moneda: 'COP', nombre: 'Peso Colombiano' },
-    { id_moneda: 'CLP', nombre: 'Peso Chileno' },
-    { id_moneda: 'INR', nombre: 'Rupia India' },
-    { id_moneda: 'KRW', nombre: 'Won Surcoreano' }
-  ];
-  constructor(private formBuilder: FormBuilder, private lS: LetradecambioService, private snackBar: MatSnackBar, private router: Router) { }
+  constructor(private cS: CarterasService, private formBuilder: FormBuilder, private lS: LetradecambioService, private snackBar: MatSnackBar, private router: Router) { }
   ngOnInit(): void {
+    //para la lista foranea de asociados
+    this.cS.list().subscribe(data => {
+      this.listaAcreedores = data
+    })
     this.form = this.formBuilder.group({
       hmonto: ['', Validators.required],
       hfecha: ['', Validators.required],
@@ -97,6 +86,29 @@ export class LetradecambioComponent {
       }
 
       capitalizacionControl?.updateValueAndValidity();
+    });
+    this.form.get('hacredor')?.valueChanges.subscribe(() => {
+      this.calcularRetencion()
+      this.calcularSD()
+      this.calcularTCEA()
+      this.calcularDescuento()
+      this.generarMontorecibido()
+      this.generarMontoentregado()
+      this.cS.list().subscribe(data => {
+        // Filtra los datos solo para el usuario actual
+        const filteredData = data.filter((element: Carteras) => element.id_cartera === this.form.get('hacredor')?.value);
+        
+        if (filteredData.length > 0) {
+          const fecha = new Date(filteredData[0].fechad);
+          const fechaFormateada = `${fecha.getMonth() + 1}/${fecha.getDate()}/${fecha.getFullYear()}`;
+    
+          // Actualiza solo los valores necesarios en el formulario sin reemplazarlo
+          this.form.patchValue({
+            hmoneda: filteredData[0].moneda,
+            hfecha2: fechaFormateada
+          });
+        }
+      });
     });
 
     this.form.get('hfecha')?.valueChanges.subscribe(() => {
@@ -286,21 +298,19 @@ export class LetradecambioComponent {
   }
   generarLetra(): void {
     if (this.form.valid) {
-      this.letradecambio.moneda = this.form.get('hmoneda')?.value;
       this.letradecambio.monto = this.form.get('hmonto')?.value;
       this.letradecambio.tea = this.tasadedescuento;
       this.letradecambio.fechav = new Date(this.form.get('hfecha')?.value);
-      this.letradecambio.fechad = new Date(this.form.get('hfecha2')?.value);
       this.letradecambio.deudor = this.form.get('hdeudor')?.value;
-      this.letradecambio.acreedor = this.form.get('hacredor')?.value;
       this.letradecambio.monto_recibido = this.MontoRecibido;
       this.letradecambio.monto_entregado = this.MontoEntregado;
       this.letradecambio.importe_descontado = this.importeDescuento;
       this.letradecambio.importe_retenido = this.importeRetencion;
+      this.letradecambio.cartera.id_cartera = this.form.get('hacredor')?.value;
 
       this.lS.insert(this.letradecambio).subscribe(d => {
 
-        this.lS.list().subscribe(data => {this.lS.setList(data);});
+        this.lS.list().subscribe(data => { this.lS.setList(data); });
 
         console.log('Letra de cambio generada');
         this.snackBar.open('Letra de cambio registrada', 'Cerrar', {

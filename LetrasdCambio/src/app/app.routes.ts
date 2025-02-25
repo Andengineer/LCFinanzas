@@ -5,6 +5,7 @@ import { ReporteComponent } from './components/letrasdecambio/reporte/reporte.co
 import { LoginComponent } from './components/login/login.component';
 import { AuthGuard } from './guard/AuthGuard.guard';
 import { NgModule } from '@angular/core';
+import { CarteraComponent } from './components/login/cartera/cartera.component';
 
 export const routes: Routes = [
     
@@ -15,7 +16,9 @@ export const routes: Routes = [
         canActivate: [AuthGuard], // Protegido por autenticación
         children: [
             { path: 'nuevo', component: LetradecambioComponent },
-            { path: 'busqueda', component: ReporteComponent }
+            { path: 'busqueda', component: ReporteComponent },
+            { path: 'cartera', component: CarteraComponent },
+            
         ]
     },
     { path: '', redirectTo: 'login', pathMatch: 'full' }, // Redirige al login por defecto

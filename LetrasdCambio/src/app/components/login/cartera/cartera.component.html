@@ -1,0 +1,38 @@
+<div class="container mt-4">
+  <h2 class="text-center">Carteras</h2>
+
+  <div class="content">
+    <!-- Contenedor del formulario -->
+    <div class="form-container">
+      <form [formGroup]="form" (submit)="generarCartera()">
+        <!-- Moneda -->
+        <mat-form-field class="full-width">
+          <mat-label>Moneda</mat-label>
+          <mat-select formControlName="hmoneda">
+            @for (food of listaMonedas; track food) {
+            <mat-option [value]="food.id_moneda">{{ food.nombre }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+       
+        <!-- Fecha de descuento -->
+        <mat-form-field class="full-width">
+          <mat-label>Fecha de Descuento</mat-label>
+          <input matInput [matDatepicker]="picker2" formControlName="hfecha2" readonly>
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+        <!-- Acreedor -->
+        <mat-form-field class="full-width">
+          <mat-label>Acreedor</mat-label>
+          <input matInput type="text" placeholder="Nombre del acreedor" formControlName="hacredor">
+        </mat-form-field>
+
+        <br>
+        <div>
+          <button mat-flat-button>Crear Cartera</button>
+        </div>
+      </form>
+    </div>
+
+</div>
