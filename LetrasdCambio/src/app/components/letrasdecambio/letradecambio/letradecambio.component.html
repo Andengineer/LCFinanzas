@@ -29,6 +29,11 @@
         </mat-form-field>
         <h3>Letra</h3>
         <!-- Monto -->
+        <mat-form-field class="example-full-width" *ngIf="edicion">
+          <mat-label>Codigo</mat-label>
+          <input matInput placeholder="Ejm. 1" formControlName="hcodigo" readonly>
+        </mat-form-field>
+        
         <mat-form-field class="full-width">
           <mat-label>Monto</mat-label>
           <input matInput type="number" formControlName="hmonto">

@@ -18,7 +18,7 @@ import { ActivatedRoute, Params, Router, RouterOutlet } from '@angular/router';
   selector: 'app-cartera',
   providers: [provideNativeDateAdapter()],
     standalone: true,
-  imports: [RouterOutlet,MatCheckboxModule, MatDatepickerModule, FormsModule, MatInputModule, MatFormFieldModule, MatSelectModule, MatButtonModule, MatIconModule, ReactiveFormsModule, CommonModule],
+  imports: [MatCheckboxModule, MatDatepickerModule, FormsModule, MatInputModule, MatFormFieldModule, MatSelectModule, MatButtonModule, MatIconModule, ReactiveFormsModule, CommonModule],
   templateUrl: './cartera.component.html',
   styleUrl: './cartera.component.css'
 })
@@ -70,26 +70,40 @@ export class CarteraComponent {
       this.cartera.fechad= this.form.get('hfecha2')?.value;
       this.cartera.tcea=0;
     }
-    if(this.edicion){
-      this.cS.update(this.cartera).subscribe(d=>{
-        this.cS.list().subscribe(d=>{
-          this.cS.setList(d)
-        })
-      })
-    }else{
+    if (this.edicion) {
+      this.cS.update(this.cartera).subscribe(d => {
+        this.cS.list().subscribe(data => {
+          this.cS.setList(data);
+    
+          // Mensaje de confirmación para actualización
+          this.snackBar.open('Cartera actualizada', 'Cerrar', {
+            duration: 3000, // 3 segundos
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+            panelClass: ['snackbar-success']
+          });
+    
+          this.router.navigate(['letrasdecambio/carteralist']);
+        });
+      });
+    } else {
       this.cS.insert(this.cartera).subscribe(d => {
-
-        this.cS.list().subscribe(data => { this.cS.setList(data); });
-  
-        console.log('Cartera registrada');
+        this.cS.list().subscribe(data => {
+          this.cS.setList(data);
+        });
+    
+        // Mensaje de confirmación para registro
         this.snackBar.open('Cartera registrada', 'Cerrar', {
-          duration: 3000,  // Duración del mensaje (3 segundos)
-          verticalPosition: 'top', // Posición superior
-          horizontalPosition: 'center', // Posición centrada
-          panelClass: ['snackbar-success'] // Clase personalizada (opcional)
-        }); this.router.navigate(['letrasdecambio/carteralist']);
+          duration: 3000,
+          verticalPosition: 'top',
+          horizontalPosition: 'center',
+          panelClass: ['snackbar-success']
+        });
+    
+        this.router.navigate(['letrasdecambio/carteralist']);
       });
     }
+    
 
     
   }

@@ -29,5 +29,8 @@ export class LetradecambioService {
   buscarfecha(fecha: String) {
     return this.http.get<Letrasdecambio[]>(`${this.url}/lfechas/${fecha}`);
   }
+  update(a:Letrasdecambio){
+        return this.http.put(this.url,a)
+      }
   
 }

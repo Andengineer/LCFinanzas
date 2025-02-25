@@ -26,6 +26,10 @@ export const routes: Routes = [
               {
                 path: 'carteralist/ediciones/:id',
                 component: CarteraComponent
+              },
+              {
+                path: 'edicionesl/:id',
+                component: LetradecambioComponent
               }
 
 

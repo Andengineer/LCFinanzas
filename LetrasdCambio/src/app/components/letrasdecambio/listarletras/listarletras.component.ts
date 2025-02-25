@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { RouterModule } from '@angular/router';
+import { RouterLink, RouterModule } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { Letrasdecambio } from '../../../models/Letrasdecambio';
@@ -9,13 +9,13 @@ import { LetradecambioService } from '../../../services/letradecambio.service';
 
 @Component({
   selector: 'app-listarletras',
-  imports: [MatTableModule, MatIconModule, RouterModule, MatPaginatorModule],
+  imports: [MatTableModule, MatIconModule, RouterModule, MatPaginatorModule,RouterLink],
   templateUrl: './listarletras.component.html',
   styleUrl: './listarletras.component.css'
 })
 export class ListarletrasComponent implements OnInit {
   dataSource: MatTableDataSource<Letrasdecambio> = new MatTableDataSource()
-  displayedColumns: string[] = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'accion01']
+  displayedColumns: string[] = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'accion01','actualizar']
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   constructor(private cS: LetradecambioService, private snackBar: MatSnackBar) { }
   ngOnInit(): void {

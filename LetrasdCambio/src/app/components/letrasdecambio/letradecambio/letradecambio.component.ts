@@ -12,7 +12,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { LetradecambioService } from '../../../services/letradecambio.service';
 import { Letrasdecambio } from '../../../models/Letrasdecambio';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { CarterasService } from '../../../services/carteras.service';
 import { Carteras } from '../../../models/Carteras';
 
@@ -25,6 +25,8 @@ import { Carteras } from '../../../models/Carteras';
   styleUrl: './letradecambio.component.css'
 })
 export class LetradecambioComponent {
+  id: number = 0;
+  edicion: boolean = false
   id_cartera: number = 0
   listaAcreedores: Carteras[] = []
   disableSelect = new FormControl(false);
@@ -52,13 +54,21 @@ export class LetradecambioComponent {
     { id: 8, nombre: "Semestral", dias: 180 },
     { id: 9, nombre: "Anual", dias: 360 }
   ];
-  constructor(private cS: CarterasService, private formBuilder: FormBuilder, private lS: LetradecambioService, private snackBar: MatSnackBar, private router: Router) { }
+  constructor(private cS: CarterasService, private formBuilder: FormBuilder, private lS: LetradecambioService, private snackBar: MatSnackBar, private router: Router, private route: ActivatedRoute) { }
   ngOnInit(): void {
+    this.route.params.subscribe((data: Params) => {
+      this.id = data['id'];
+      console.log("ID obtenido de la ruta:", this.id); // Verifica el valor de ID
+      this.edicion = data['id'] != null
+      //captura data que viene de la lista |^|
+      this.init()
+    })
     //para la lista foranea de asociados
     this.cS.list().subscribe(data => {
       this.listaAcreedores = data
     })
     this.form = this.formBuilder.group({
+      hcodigo:[''],
       hmonto: ['', Validators.required],
       hfecha: ['', Validators.required],
       hfecha2: ['', Validators.required],
@@ -97,13 +107,13 @@ export class LetradecambioComponent {
       this.cS.list().subscribe(data => {
         // Filtra los datos solo para el usuario actual
         const filteredData = data.filter((element: Carteras) => element.id_cartera === this.form.get('hacredor')?.value);
-      
+
         if (filteredData.length > 0) {
           let fecha = new Date(filteredData[0].fechad);
           fecha.setDate(fecha.getDate() + 1); // Agrega 1 día
-      
+
           const fechaFormateada = `${fecha.getMonth() + 1}/${fecha.getDate()}/${fecha.getFullYear()}`;
-      
+
           // Actualiza solo los valores necesarios en el formulario sin reemplazarlo
           this.form.patchValue({
             hmoneda: filteredData[0].moneda,
@@ -111,7 +121,7 @@ export class LetradecambioComponent {
           });
         }
       });
-      
+
     });
 
     this.form.get('hfecha')?.valueChanges.subscribe(() => {
@@ -301,6 +311,7 @@ export class LetradecambioComponent {
   }
   generarLetra(): void {
     if (this.form.valid) {
+      this.letradecambio.id_letra = this.form.get('hcodigo')?.value;
       this.letradecambio.monto = this.form.get('hmonto')?.value;
       this.letradecambio.tea = this.tasadedescuento;
       this.letradecambio.fechav = new Date(this.form.get('hfecha')?.value);
@@ -310,20 +321,79 @@ export class LetradecambioComponent {
       this.letradecambio.importe_descontado = this.importeDescuento;
       this.letradecambio.importe_retenido = this.importeRetencion;
       this.letradecambio.cartera.id_cartera = this.form.get('hacredor')?.value;
+      if (this.edicion) {
+        this.lS.update(this.letradecambio).subscribe(d => {
+          this.lS.list().subscribe(data => {
+            this.lS.setList(data);
+      
+            // Mensaje de confirmación para actualización
+            this.snackBar.open('Letra actualizada', 'Cerrar', {
+              duration: 3000, // 3 segundos
+              verticalPosition: 'top',
+              horizontalPosition: 'center',
+              panelClass: ['snackbar-success']
+            });
+      
+            this.router.navigate(['letrasdecambio']);
+          });
+        });
+      }else {
+        this.lS.insert(this.letradecambio).subscribe(d => {
 
-      this.lS.insert(this.letradecambio).subscribe(d => {
+          this.lS.list().subscribe(data => { this.lS.setList(data); });
+  
+          console.log('Letra de cambio generada');
+          this.snackBar.open('Letra de cambio registrada', 'Cerrar', {
+            duration: 3000,  // Duración del mensaje (3 segundos)
+            verticalPosition: 'top', // Posición superior
+            horizontalPosition: 'center', // Posición centrada
+            panelClass: ['snackbar-success'] // Clase personalizada (opcional)
+          }); this.router.navigate(['letrasdecambio']);
+        });
+      }
 
-        this.lS.list().subscribe(data => { this.lS.setList(data); });
 
-        console.log('Letra de cambio generada');
-        this.snackBar.open('Letra de cambio registrada', 'Cerrar', {
-          duration: 3000,  // Duración del mensaje (3 segundos)
-          verticalPosition: 'top', // Posición superior
-          horizontalPosition: 'center', // Posición centrada
-          panelClass: ['snackbar-success'] // Clase personalizada (opcional)
-        }); this.router.navigate(['letrasdecambio']);
+      
+    }
+  }
+  init() {
+    if (this.edicion) {
+      this.lS.list().subscribe(data => {
+        // Filtra los datos solo para el usuario actual
+        const filteredData = data.filter((element: Letrasdecambio) => element.id_letra == this.id);
+  
+        if (filteredData.length > 0) {
+          let fecha = new Date(filteredData[0].fechav);
+          let fecha2 = new Date(filteredData[0].cartera.fechad);
+  
+          fecha.setDate(fecha.getDate() + 1);  // Agrega 1 día a la fecha de vencimiento
+          fecha2.setDate(fecha2.getDate() + 1); // Agrega 1 día a la fecha de descuento
+  
+          // Formatear fechas en MM/DD/YYYY
+          const fechaISO2 = fecha.toISOString().split('T')[0]; // Formato "YYYY-MM-DD"
+          const fechaISO = fecha2.toISOString().split('T')[0]; // Formato "YYYY-MM-DD"
+  
+          // Verifica si las fechas son correctas antes de actualizar el formulario
+          console.log("Fecha de Vencimiento (hfecha):", fechaISO2);
+          console.log("Fecha de Descuento (hfecha2):", fechaISO);
+  
+          // Actualiza solo los valores necesarios en el formulario sin reemplazarlo
+          this.form.patchValue({
+            hacredor: filteredData[0].cartera.id_cartera,
+            hmoneda: filteredData[0].cartera.moneda,
+            hfecha: fechaISO2,  // Fecha de vencimiento
+            hfecha2: fechaISO, // Fecha de descuento
+            hcodigo: filteredData[0].id_letra,
+            hmonto: filteredData[0].monto,
+            hdeudor: filteredData[0].deudor,
+          });
+  
+          console.log("Acreedor:", filteredData[0].cartera.acreedor);
+        }
       });
     }
   }
+  
+
 
 }
