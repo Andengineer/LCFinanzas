@@ -9,7 +9,7 @@ import { CarteraComponent } from './components/login/cartera/cartera.component';
 import { ListarcarterasComponent } from './components/listarcarteras/listarcarteras.component';
 
 export const routes: Routes = [
-    
+
     { path: 'login', component: LoginComponent }, // Página de Login
     {
         path: 'letrasdecambio',
@@ -19,15 +19,25 @@ export const routes: Routes = [
             { path: 'nuevo', component: LetradecambioComponent },
             { path: 'busqueda', component: ReporteComponent },
             { path: 'cartera', component: CarteraComponent },
-            { path: 'carteralist', component: ListarcarterasComponent },
-            
+            {
+                path: 'carteralist',
+                component: ListarcarterasComponent
+              },
+              {
+                path: 'carteralist/ediciones/:id',
+                component: CarteraComponent
+              }
+
+
         ]
     },
+
     { path: '', redirectTo: 'login', pathMatch: 'full' }, // Redirige al login por defecto
     { path: '**', redirectTo: 'login' } // Manejo de rutas no encontradas
+
 ];
 @NgModule({
     imports: [RouterModule.forRoot(routes)],
     exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

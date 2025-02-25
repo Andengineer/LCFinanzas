@@ -1,3 +1,4 @@
+
 <div class="container mt-4">
   <h2 class="text-center">Carteras</h2>
 
@@ -5,6 +6,10 @@
     <!-- Contenedor del formulario -->
     <div class="form-container">
       <form [formGroup]="form" (submit)="generarCartera()">
+        <mat-form-field class="example-full-width" *ngIf="edicion">
+          <mat-label>Codigo</mat-label>
+          <input matInput placeholder="Ejm. 1" formControlName="hcodigo" readonly>
+        </mat-form-field>
         <!-- Moneda -->
         <mat-form-field class="full-width">
           <mat-label>Moneda</mat-label>

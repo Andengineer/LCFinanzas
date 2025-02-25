@@ -97,11 +97,13 @@ export class LetradecambioComponent {
       this.cS.list().subscribe(data => {
         // Filtra los datos solo para el usuario actual
         const filteredData = data.filter((element: Carteras) => element.id_cartera === this.form.get('hacredor')?.value);
-        
+      
         if (filteredData.length > 0) {
-          const fecha = new Date(filteredData[0].fechad);
+          let fecha = new Date(filteredData[0].fechad);
+          fecha.setDate(fecha.getDate() + 1); // Agrega 1 día
+      
           const fechaFormateada = `${fecha.getMonth() + 1}/${fecha.getDate()}/${fecha.getFullYear()}`;
-    
+      
           // Actualiza solo los valores necesarios en el formulario sin reemplazarlo
           this.form.patchValue({
             hmoneda: filteredData[0].moneda,
@@ -109,6 +111,7 @@ export class LetradecambioComponent {
           });
         }
       });
+      
     });
 
     this.form.get('hfecha')?.valueChanges.subscribe(() => {

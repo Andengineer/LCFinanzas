@@ -2,20 +2,20 @@ import { Component, ViewChild } from '@angular/core';
 import { Carteras } from '../../models/Carteras';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterModule } from '@angular/router';
+import { RouterLink, RouterModule } from '@angular/router';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { CarterasService } from '../../services/carteras.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-listarcarteras',
-  imports: [MatTableModule, MatIconModule, RouterModule, MatPaginatorModule],
+  imports: [MatTableModule, MatIconModule, RouterModule, MatPaginatorModule,RouterLink],
   templateUrl: './listarcarteras.component.html',
   styleUrl: './listarcarteras.component.css'
 })
 export class ListarcarterasComponent {
   dataSource: MatTableDataSource<Carteras> = new MatTableDataSource()
-  displayedColumns: string[] = ['c1', 'c2', 'c3', 'c4', 'c5', 'accion01']
+  displayedColumns: string[] = ['c1', 'c2', 'c3', 'c4', 'c5', 'accion01','actualizar']
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   constructor(private cS: CarterasService, private snackBar: MatSnackBar) { }
   ngOnInit(): void {
