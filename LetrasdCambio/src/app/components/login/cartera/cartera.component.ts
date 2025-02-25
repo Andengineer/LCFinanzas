@@ -9,6 +9,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { Carteras } from '../../../models/Carteras';
+import { CarterasService } from '../../../services/carteras.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cartera',
@@ -19,6 +23,7 @@ import { MatSelectModule } from '@angular/material/select';
   styleUrl: './cartera.component.css'
 })
 export class CarteraComponent {
+  cartera: Carteras = new Carteras();
   form: FormGroup = new FormGroup({});
   listaMonedas = [
     { id_moneda: 'USD', nombre: 'Dólar Estadounidense' },
@@ -38,10 +43,9 @@ export class CarteraComponent {
     { id_moneda: 'INR', nombre: 'Rupia India' },
     { id_moneda: 'KRW', nombre: 'Won Surcoreano' }
   ];
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(private formBuilder: FormBuilder,private cS:CarterasService,private snackBar: MatSnackBar,private router: Router) { }
   ngOnInit(): void {
     this.form = this.formBuilder.group({
-      hmonto: ['', Validators.required],
       hfecha2: ['', Validators.required],
       hacredor: ['', Validators.required],
       hmoneda: ['', Validators.required]
@@ -49,6 +53,23 @@ export class CarteraComponent {
   }
 
   generarCartera(): void {
-    console.log('Generar cartera');
+    if (this.form.valid) {
+      this.cartera.moneda = this.form.get('hmoneda')?.value;
+      this.cartera.acreedor = this.form.get('hacredor')?.value;
+      this.cartera.fechad= this.form.get('hfecha2')?.value;
+      this.cartera.tcea=0;
+    }
+    this.cS.insert(this.cartera).subscribe(d => {
+
+      this.cS.list().subscribe(data => { this.cS.setList(data); });
+
+      console.log('Cartera registrada');
+      this.snackBar.open('Cartera registrada', 'Cerrar', {
+        duration: 3000,  // Duración del mensaje (3 segundos)
+        verticalPosition: 'top', // Posición superior
+        horizontalPosition: 'center', // Posición centrada
+        panelClass: ['snackbar-success'] // Clase personalizada (opcional)
+      }); this.router.navigate(['letrasdecambio/carteralist']);
+    });
   }
 }

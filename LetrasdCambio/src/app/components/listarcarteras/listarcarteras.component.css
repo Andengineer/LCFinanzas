@@ -1,33 +1,17 @@
 .container {
-    max-width: 90%;
+    max-width: 95%;
     margin: 20px auto;
     padding: 20px;
-    background: #f8f9fa;
+    background: #f5f5f5;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
   
-  h2 {
+  h1 {
     text-align: center;
-    color: #673ab7;
+    color: #333;
+    font-size: 24px;
     margin-bottom: 20px;
-  }
-  
-  mat-form-field {
-    width: 100%;
-    margin-bottom: 20px;
-  }
-  
-  button {
-    display: block;
-    width: 100%;
-    background-color: #673ab7;
-    color: white;
-    font-weight: bold;
-  }
-  
-  button:hover {
-    background-color: #512da8;
   }
   
   .table-responsive {
@@ -39,6 +23,7 @@
     width: 100%;
     background: white;
     border-radius: 8px;
+    border-collapse: collapse;
   }
   
   th {
@@ -46,11 +31,17 @@
     color: rgb(0, 0, 0);
     text-align: left;
     padding: 12px;
+    font-size: 14px;
   }
   
   td {
     padding: 10px;
     border-bottom: 1px solid #e0e0e0;
+    font-size: 14px;
+  }
+  
+  tr:hover {
+    background-color: #ede7f6;
   }
   
   mat-icon {

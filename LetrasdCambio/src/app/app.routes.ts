@@ -6,6 +6,7 @@ import { LoginComponent } from './components/login/login.component';
 import { AuthGuard } from './guard/AuthGuard.guard';
 import { NgModule } from '@angular/core';
 import { CarteraComponent } from './components/login/cartera/cartera.component';
+import { ListarcarterasComponent } from './components/listarcarteras/listarcarteras.component';
 
 export const routes: Routes = [
     
@@ -18,6 +19,7 @@ export const routes: Routes = [
             { path: 'nuevo', component: LetradecambioComponent },
             { path: 'busqueda', component: ReporteComponent },
             { path: 'cartera', component: CarteraComponent },
+            { path: 'carteralist', component: ListarcarterasComponent },
             
         ]
     },
