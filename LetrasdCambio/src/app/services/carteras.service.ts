@@ -30,4 +30,7 @@ export class CarterasService {
     update(a:Carteras){
       return this.http.put(this.url,a)
     }
+    calcularTCEA(id: number) {
+      return this.http.post(`${this.url}/${id}/calcular-tcea`, {});
+    }
 }

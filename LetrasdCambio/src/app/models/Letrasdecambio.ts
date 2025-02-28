@@ -11,4 +11,5 @@ export class Letrasdecambio {
     importe_descontado: number=0;
     importe_retenido: number=0;
     cartera:Carteras=new Carteras();
+    dias_descontado: number=0;
 }

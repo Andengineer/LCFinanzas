@@ -61,6 +61,10 @@
                 <th mat-header-cell *matHeaderCellDef> Importe entregado</th>
                 <td mat-cell *matCellDef="let element"> {{element.monto_entregado}} </td>
             </ng-container>
+            <ng-container matColumnDef="c13">
+                <th mat-header-cell *matHeaderCellDef> Dias descontados</th>
+                <td mat-cell *matCellDef="let element"> {{element.dias_descontado}} </td>
+            </ng-container>
 
 
             <ng-container matColumnDef="accion01">

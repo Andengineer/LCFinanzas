@@ -104,6 +104,7 @@ export class LetradecambioComponent {
       this.calcularDescuento()
       this.generarMontorecibido()
       this.generarMontoentregado()
+      this.calcularDiasDescontados()
       this.cS.list().subscribe(data => {
         // Filtra los datos solo para el usuario actual
         const filteredData = data.filter((element: Carteras) => element.id_cartera === this.form.get('hacredor')?.value);
@@ -131,6 +132,7 @@ export class LetradecambioComponent {
       this.calcularDescuento()
       this.generarMontorecibido()
       this.generarMontoentregado()
+      this.calcularDiasDescontados()
     });
     this.form.get('htasa')?.valueChanges.subscribe(() => {
       this.calcularRetencion()
@@ -139,6 +141,7 @@ export class LetradecambioComponent {
       this.calcularDescuento()
       this.generarMontorecibido()
       this.generarMontoentregado()
+      this.calcularDiasDescontados()
     });
     this.form.get('hcapitalizacion')?.valueChanges.subscribe(() => {
       this.calcularRetencion()
@@ -147,6 +150,7 @@ export class LetradecambioComponent {
       this.calcularDescuento()
       this.generarMontorecibido()
       this.generarMontoentregado()
+      this.calcularDiasDescontados()
     });
     this.form.get('htipotasa')?.valueChanges.subscribe(() => {
       this.calcularRetencion()
@@ -155,6 +159,7 @@ export class LetradecambioComponent {
       this.calcularDescuento()
       this.generarMontorecibido()
       this.generarMontoentregado()
+      this.calcularDiasDescontados()
     });
     this.form.get('httasa')?.valueChanges.subscribe(() => {
       this.calcularRetencion()
@@ -163,6 +168,7 @@ export class LetradecambioComponent {
       this.calcularDescuento()
       this.generarMontorecibido()
       this.generarMontoentregado()
+      this.calcularDiasDescontados()
     });
 
     this.form.get('hfecha2')?.valueChanges.subscribe(() => {
@@ -172,6 +178,7 @@ export class LetradecambioComponent {
       this.calcularDescuento()
       this.generarMontorecibido()
       this.generarMontoentregado()
+      this.calcularDiasDescontados()
     });
     this.form.get('hmonto')?.valueChanges.subscribe(() => {
       this.calcularRetencion()
@@ -180,6 +187,7 @@ export class LetradecambioComponent {
       this.calcularDescuento()
       this.generarMontorecibido()
       this.generarMontoentregado()
+      this.calcularDiasDescontados()
     });
     this.form.get('htasar')?.valueChanges.subscribe(() => {
       this.calcularRetencion()
@@ -188,6 +196,7 @@ export class LetradecambioComponent {
       this.calcularDescuento()
       this.generarMontorecibido()
       this.generarMontoentregado()
+      this.calcularDiasDescontados()
     });
     this.form.get('htasa')?.valueChanges.subscribe(() => {
       this.calcularRetencion()
@@ -196,6 +205,7 @@ export class LetradecambioComponent {
       this.calcularDescuento()
       this.generarMontorecibido()
       this.generarMontoentregado()
+      this.calcularDiasDescontados()
     });
 
     this.form.get('aplicarRetencion')?.valueChanges.subscribe((valor) => {
@@ -309,6 +319,17 @@ export class LetradecambioComponent {
     const monto = this.form.get('hmonto')?.value || 0;
     this.MontoEntregado = monto + 15 + 6 - this.importeRetencion;
   }
+  calcularDiasDescontados(): number {
+    const fechaDescuento = new Date(this.form.get('hfecha2')?.value);
+    const fechaVencimiento = new Date(this.form.get('hfecha')?.value);
+    
+    // Calcular la diferencia en milisegundos y convertir a días
+    const diferenciaMs = fechaVencimiento.getTime() - fechaDescuento.getTime();
+    const diasDescontados = Math.ceil(diferenciaMs / (1000 * 60 * 60 * 24));
+    
+    // Asegurar que no haya valores negativos
+    return diasDescontados > 0 ? diasDescontados : 0;
+  }
   generarLetra(): void {
     if (this.form.valid) {
       this.letradecambio.id_letra = this.form.get('hcodigo')?.value;
@@ -321,41 +342,47 @@ export class LetradecambioComponent {
       this.letradecambio.importe_descontado = this.importeDescuento;
       this.letradecambio.importe_retenido = this.importeRetencion;
       this.letradecambio.cartera.id_cartera = this.form.get('hacredor')?.value;
+      this.letradecambio.dias_descontado = this.calcularDiasDescontados();
+  
       if (this.edicion) {
         this.lS.update(this.letradecambio).subscribe(d => {
           this.lS.list().subscribe(data => {
             this.lS.setList(data);
-      
-            // Mensaje de confirmación para actualización
+  
             this.snackBar.open('Letra actualizada', 'Cerrar', {
-              duration: 3000, // 3 segundos
+              duration: 3000,
               verticalPosition: 'top',
               horizontalPosition: 'center',
               panelClass: ['snackbar-success']
             });
-      
+  
             this.router.navigate(['letrasdecambio']);
           });
         });
-      }else {
+      } else {
         this.lS.insert(this.letradecambio).subscribe(d => {
-
-          this.lS.list().subscribe(data => { this.lS.setList(data); });
+          this.lS.list().subscribe(data => {
+            this.lS.setList(data);
+          });
   
-          console.log('Letra de cambio generada');
+          // Calcular TCEA después de registrar la letra
+          this.cS.calcularTCEA(this.letradecambio.cartera.id_cartera).subscribe(() => {
+            console.log('TCEA calculada para cartera:', this.letradecambio.cartera.id_cartera);
+          });
+  
           this.snackBar.open('Letra de cambio registrada', 'Cerrar', {
-            duration: 3000,  // Duración del mensaje (3 segundos)
-            verticalPosition: 'top', // Posición superior
-            horizontalPosition: 'center', // Posición centrada
-            panelClass: ['snackbar-success'] // Clase personalizada (opcional)
-          }); this.router.navigate(['letrasdecambio']);
+            duration: 3000,
+            verticalPosition: 'top',
+            horizontalPosition: 'center',
+            panelClass: ['snackbar-success']
+          });
+  
+          this.router.navigate(['letrasdecambio']);
         });
       }
-
-
-      
     }
   }
+  
   init() {
     if (this.edicion) {
       this.lS.list().subscribe(data => {

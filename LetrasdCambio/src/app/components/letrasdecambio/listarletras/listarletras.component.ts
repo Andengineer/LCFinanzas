@@ -15,7 +15,7 @@ import { LetradecambioService } from '../../../services/letradecambio.service';
 })
 export class ListarletrasComponent implements OnInit {
   dataSource: MatTableDataSource<Letrasdecambio> = new MatTableDataSource()
-  displayedColumns: string[] = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12', 'accion01','actualizar']
+  displayedColumns: string[] = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12','c13', 'accion01','actualizar']
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   constructor(private cS: LetradecambioService, private snackBar: MatSnackBar) { }
   ngOnInit(): void {
